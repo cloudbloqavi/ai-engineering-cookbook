@@ -16,6 +16,7 @@
 8. [Skill quick reference](#8-skill-quick-reference)
 9. [Handoff message templates](#9-handoff-message-templates)
 10. [Team conventions](#10-team-conventions)
+11. [AI observability layer](#11-ai-observability-layer)
 
 ---
 
@@ -271,6 +272,16 @@ After full setup, your project will contain:
 
 ```
 your-project/
+├── .ai/                               # AI-Native governance layer (observability)
+│   ├── config/
+│   │   ├── AGENT_PROFILE_ROLES.md     # Multi-agent pod roles and handoff protocols
+│   │   └── VERIFICATION_AND_EVAL_GUIDE.md  # Automated + human gate definitions
+│   └── traces/
+│       └── AGENT_LOG_REFLECTIONS.md   # Append-only execution journal (never delete)
+│
+├── postmortems/
+│   └── POSTMORTEM_AND_LEARNING_LOG.md # Blameless incident → root cause → system fix log
+│
 ├── .specify/                          # Spec-Kit
 │   ├── memory/
 │   │   └── constitution.md            # Project principles & constraints
@@ -287,8 +298,9 @@ your-project/
 │
 ├── .claude-plugin/                    # Superpowers (Claude Code)
 │   └── skills/                        # Auto-triggered skill definitions
+│                                      # Also: domain prompt-skills (e.g. auth-standards.md)
 │
-├── CLAUDE.md                          # Agent instructions (both tools)
+├── CLAUDE.md                          # Agent instructions (all layers)
 ├── AGENTS.md                          # Agent instructions (OpenAI-compatible agents)
 └── <your source code>
 ```
@@ -422,6 +434,72 @@ These are complementary. The agent reads both. Do not duplicate content between 
 - New team-wide coding standards adopted
 - Architecture decisions made (ADRs)
 - Protected modules added or removed
+
+---
+
+## 11. AI Observability Layer
+
+The `.ai/` directory and `postmortems/` log are the governance backbone of the AI-Native SDLC.
+They integrate directly into the Spec-Kit + Superpowers workflow at specific trigger points.
+
+### How `.ai/` integrates with this workflow
+
+| File | Read by | Written by | When |
+|---|---|---|---|
+| `.ai/config/AGENT_PROFILE_ROLES.md` | All agents at session start | Team (humans) | Role changes, new agent joins |
+| `.ai/config/VERIFICATION_AND_EVAL_GUIDE.md` | Verifier agent, Coder before commit | Team (humans) | Postmortem reveals a gate gap |
+| `.ai/traces/AGENT_LOG_REFLECTIONS.md` | Reviewer agent, humans | Coder agent | After every implementation session |
+| `postmortems/POSTMORTEM_AND_LEARNING_LOG.md` | Humans, next session's planning | Verifier agent + humans | Any failure reaching staging/prod |
+
+### When agents write to `AGENT_LOG_REFLECTIONS.md`
+
+Write a log entry after **every implementation session** — meaning after each task's
+RED → GREEN → REFACTOR → REVIEW cycle, before the commit. Minimum required fields:
+timestamp, task slug, outcome, files changed, frictions encountered.
+
+If the session was blocked or produced a partial outcome, the entry is especially important:
+it is the primary input for the postmortem and the prompt-skill refinement process.
+
+```
+# Trigger: after every task cycle (before commit)
+Append to .ai/traces/AGENT_LOG_REFLECTIONS.md:
+  - Outcome: COMPLETE | PARTIAL | BLOCKED
+  - Files changed
+  - Frictions: where did the spec or constitution require inference?
+  - Suggested refinements: what exact change to which file would prevent friction?
+```
+
+### When to create a postmortem entry
+
+Create an entry in `postmortems/POSTMORTEM_AND_LEARNING_LOG.md` when:
+
+- Any agent-generated bug reaches staging or production
+- A spec compliance failure is caught at the review stage (not at the task stage)
+- A TDD cycle cannot be completed within a single session (outcome: BLOCKED for > 1 session)
+- Any Gate 3 or Gate 4 failure in `VERIFICATION_AND_EVAL_GUIDE.md`
+
+Do not create a postmortem for every friction or minor ambiguity — those belong in
+`AGENT_LOG_REFLECTIONS.md`. A postmortem is for failures that escaped the normal gates.
+
+### Continuous improvement: how prompt-skills improve over time
+
+```
+Session log reveals recurring friction (e.g. "spec never defines auth token format")
+     ↓
+Postmortem identifies root cause (e.g. "no auth-standards prompt-skill exists")
+     ↓
+Team creates or updates .claude-plugin/skills/auth-standards.md
+     ↓
+Next session: Coder reads auth-standards.md at task start → no ambiguity → no friction
+     ↓
+Log entry for next session shows: "Frictions encountered: none"
+```
+
+Prompt-skills in `.claude-plugin/skills/` are domain-specific guidelines that agents read
+during execution. They encode team conventions that are too detailed for `constitution.md`
+but too important to leave to agent inference. Common examples: authentication standards,
+API naming conventions, error-handling patterns, test fixture conventions. Every postmortem
+should produce either a new prompt-skill or an update to an existing one.
 
 ---
 

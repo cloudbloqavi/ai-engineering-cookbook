@@ -8,6 +8,7 @@
 
 1. [What This Is](#1-what-this-is)
 2. [Core Ecosystem](#2-core-ecosystem)
+- [The AI-Native SDLC Framework](#the-ai-native-sdlc-framework)
 3. [Repository Contents](#3-repository-contents)
 4. [Workflow Quick Picker](#4-workflow-quick-picker)
 5. [Curated Community Extensions](#5-curated-community-extensions)
@@ -106,6 +107,83 @@ Superpowers:                             │
 ```
 
 **The hard rule:** Spec-Kit owns everything above the handoff. Superpowers owns everything below. Never let them cross. The [`SUPERPOWERS_SPECKIT_COOKBOOK.md`](./SUPERPOWERS_SPECKIT_COOKBOOK.md) documents exactly how to enforce this boundary.
+
+---
+
+## The AI-Native SDLC Framework
+
+Modern AI-assisted development has crossed a threshold: AI agents now generate approximately 75% of
+implementation code in well-structured workflows. This changes the human role fundamentally. Engineers
+are no longer the primary code authors — they are intent definers, outcome verifiers, and system
+governors. Code becomes a byproduct of intent. The primary deliverables shift to: a clear spec, a
+verified outcome, and a system that learns from every execution cycle.
+
+Without structural guardrails, AI amplifies technical debt at scale as fast as it generates features.
+The AI-Native SDLC Framework adds an observability and governance layer on top of Spec-Kit and
+Superpowers. It codifies three non-negotiable practices: (1) no implementation without an approved
+spec, (2) every execution session produces a structured log entry, and (3) every failure feeds a
+blameless postmortem that improves the system. The result is a development process that gets
+measurably smarter with each cycle — prompts sharpen, specs become more precise, and verification
+gates catch more defects earlier.
+
+### Continuous Improvement Flywheel
+
+```
+Execution ──────────────────────────────────────────────────────────────────────────────┐
+  Agents generate code, log outcome to .ai/traces/AGENT_LOG_REFLECTIONS.md              │
+       ↓                                                                                 │
+Verification                                                                             │
+  Humans verify against .ai/config/VERIFICATION_AND_EVAL_GUIDE.md                      │
+       ↓                                                                                 │
+Learning                                                                                 │
+  Blameless postmortem on failure → postmortems/POSTMORTEM_AND_LEARNING_LOG.md          │
+  Root cause identified: spec gap? prompt-skill gap? verification gate gap?             │
+       ↓                                                                                 │
+Refinement                                                                               │
+  Update .claude-plugin/skills/ prompt-skills based on learnings                        │
+  Update .ai/config/VERIFICATION_AND_EVAL_GUIDE.md with new gates                      │
+       ↓                                                                                 │
+[Loop — system gets smarter each cycle] ────────────────────────────────────────────────┘
+```
+
+### Five Principles
+
+| Principle | What it means in practice |
+|---|---|
+| **Intent First, Code Second** | Code that passes tests but misses spec intent is a liability. When in doubt about whether a choice matches intent, ask before implementing. |
+| **Verify, Don't Just Generate** | Value is measured by spec adherence, not lines of code produced. A smaller correct implementation beats a larger incorrect one. |
+| **Precision Over Productivity** | Architectural coherence matters more than speed. The constraints in `constitution.md` protect the team — follow them even when they slow you down. |
+| **Observability is Non-Negotiable** | Every implementation session produces a structured log entry. Unlogged execution is invisible to the improvement flywheel and cannot be learned from. |
+| **Blameless Culture** | Failures are learning signals, not indictments. Postmortems fix the spec, the prompt-skill, or the gate — they do not blame the agent or the engineer. |
+
+### Directory Structure (with AI-Native Governance Layer)
+
+```
+your-project/
+├── .ai/                               # AI observability and governance
+│   ├── config/
+│   │   ├── AGENT_PROFILE_ROLES.md     # Multi-agent pod structure and handoff protocols
+│   │   └── VERIFICATION_AND_EVAL_GUIDE.md  # Automated + human verification gates
+│   └── traces/
+│       └── AGENT_LOG_REFLECTIONS.md   # Append-only execution journal (never delete)
+│
+├── postmortems/
+│   └── POSTMORTEM_AND_LEARNING_LOG.md # Blameless incident → root cause → system fix log
+│
+├── .specify/                          # Spec-Kit
+│   ├── memory/
+│   │   └── constitution.md
+│   └── specs/
+│       └── <feature>/
+│           ├── spec.md
+│           ├── tasks.md               # ← HANDOFF ARTIFACT
+│           └── plan.md
+│
+├── .claude-plugin/                    # Superpowers
+│   └── skills/                        # Auto-triggered skill definitions + domain prompt-skills
+│
+└── CLAUDE.md                          # Agent instructions (all layers)
+```
 
 ---
 
