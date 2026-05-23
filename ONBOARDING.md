@@ -8,6 +8,8 @@
 
 1. [Who This Is For](#1-who-this-is-for)
 2. [What is AI-Native Development?](#2-what-is-ai-native-development)
+   - [The Google I/O 2026 Insight: Why 75% Matters](#the-google-io-2026-insight-why-75-matters)
+2.5. [The AI-Native SDLC Flywheel](#25-the-ai-native-sdlc-flywheel)
 3. [The Two Tools](#3-the-two-tools)
 4. [Installation](#4-installation)
 5. [Scenario A — Adding a Feature to an Existing App (Brownfield)](#5-scenario-a--adding-a-feature-to-an-existing-app-brownfield)
@@ -111,9 +113,75 @@ YOUR IDEA
 WORKING FEATURE IN YOUR CODEBASE
 ```
 
+### The Google I/O 2026 Insight: Why 75% Matters
+
+In AI-native teams, AI agents generate approximately 75% of code autonomously. That number is not a boast — it is a warning about what your job becomes.
+
+When 75% of code is written by an agent, your most critical output is no longer code. It is intent. The quality of what gets built is determined almost entirely by how precisely you can describe what needs to be built. A developer who writes 500 lines of code per day is less valuable than a developer who writes 50 lines of perfectly-specified intent that generates 500 lines of correct code. Readable, testable, maintainable code that matches the spec.
+
+The corollary is harder to accept: without explicit intent specs and verification gates, AI amplifies bad decisions at the same 75% scale it amplifies good ones. An ambiguous requirement does not stay ambiguous — the agent resolves it silently, in whichever direction makes sense to it, and then implements that interpretation across every layer of the stack. By the time you notice, the wrong decision is woven into tests, database schemas, and API contracts.
+
+This is why the workflow in this guide is structured the way it is:
+- `/speckit.clarify` exists to remove ambiguity before the agent writes a single line
+- `constitution.md` exists so the agent never has to guess your rules
+- Verification gates exist because "it runs" is not the same as "it matches the spec"
+
+The 75% is already happening. The question is whether you are directing it or just hoping for the best.
+
 ### The one concept to internalize before anything else
 
 `tasks.md` is the handoff artifact. Spec-Kit produces it. Superpowers executes it. Do not skip the handoff message that bridges the two tools. Without it, the AI will re-plan from scratch and create a contradicting task list.
+
+---
+
+## 2.5. The AI-Native SDLC Flywheel
+
+Every time your AI agent builds a feature, the system gets smarter. Not automatically — you have to close the loop. Here is how.
+
+```
+         ┌─────────────────────────────────────────────────────────┐
+         │                                                         │
+         ▼                                                         │
+  ┌─────────────┐                                                  │
+  │  EXECUTION  │  Agent reads spec, builds feature, logs what     │
+  │  (Step 1)   │  it did and where it got confused.               │
+  └──────┬──────┘  Written to: .ai/traces/AGENT_LOG_REFLECTIONS.md │
+         │                                                         │
+         ▼                                                         │
+  ┌──────────────┐                                                 │
+  │ VERIFICATION │  You check: does this match the spec?           │
+  │   (Step 2)   │  Automated: tests pass? lint clean? coverage?  │
+  └──────┬───────┘  Checked against: VERIFICATION_AND_EVAL_GUIDE.md│
+         │                                                         │
+         ▼                                                         │
+  ┌──────────────┐                                                 │
+  │   LEARNING   │  Something went wrong? Write a blameless        │
+  │   (Step 3)   │  postmortem — not "who broke this" but "what   │
+  └──────┬───────┘  in our process allowed this?"                 │
+         │          Written to: postmortems/POSTMORTEM_AND_        │
+         │          LEARNING_LOG.md                                │
+         ▼                                                         │
+  ┌──────────────┐                                                 │
+  │  REFINEMENT  │  Update prompt-skills or spec templates based   │
+  │   (Step 4)   │  on what you learned. Next run has better       │
+  └──────────────┘  guidance.                                      │
+         │          Updates: .claude-plugin/skills/ or             │
+         │          constitution.md                                │
+         │                                                         │
+         └─────────────── next feature ────────────────────────────┘
+```
+
+This is why AI-native teams get faster over time, not slower. Every incident makes the system smarter. The first feature takes the most back-and-forth. The tenth feature runs almost on rails — because every gap in the specs has been closed, every ambiguity has been resolved, and every agent friction point has been documented and fixed.
+
+The three files that close the loop:
+
+| File | Purpose |
+|---|---|
+| `.ai/traces/AGENT_LOG_REFLECTIONS.md` | Agents write here — what they built, what confused them, what they suggest |
+| `.ai/config/VERIFICATION_AND_EVAL_GUIDE.md` | You define your verification gates here — automated and human checks |
+| `postmortems/POSTMORTEM_AND_LEARNING_LOG.md` | You write here after incidents — process failures, not people failures |
+
+You do not need to manage these files manually during implementation. The agent writes to `AGENT_LOG_REFLECTIONS.md` automatically per DIRECTIVE 3 in `CLAUDE.md`. Your job is to read it after each feature and act on what you find.
 
 ---
 
@@ -277,6 +345,31 @@ ls .specify/
 # Expected output:
 # memory/   specs/   templates/   scripts/
 ```
+
+### Step 5: Initialize the AI Governance Layer
+
+This step sets up the observability files that close the AI flywheel loop (see §2.5). The agent logs its execution here, you run verification gates from here, and blameless postmortems live here.
+
+```bash
+# Create the AI observability directories
+mkdir -p .ai/config .ai/traces postmortems
+
+# Copy governance templates from the cookbook
+# (These templates are in the cookbook repo — adapt them to your project)
+# - .ai/config/AGENT_PROFILE_ROLES.md    → define your agent team
+# - .ai/config/VERIFICATION_AND_EVAL_GUIDE.md → define your gates
+# - .ai/traces/AGENT_LOG_REFLECTIONS.md  → agents will auto-append here
+# - postmortems/POSTMORTEM_AND_LEARNING_LOG.md → blameless incident log
+
+# Expected: four directories/files created
+ls .ai/
+# Expected output:
+# config/   traces/
+```
+
+You fill in `AGENT_PROFILE_ROLES.md` with your actual agent roles (Planner, Orchestrator, Coder, etc.) and `VERIFICATION_AND_EVAL_GUIDE.md` with your CI pipeline checks (linting rules, coverage thresholds, required test types).
+
+You do not need to fill these in perfectly on day one. Start with the defaults from the cookbook and refine them after your first feature. The flywheel works even with rough initial settings — it just means the first feature surfaces more refinements than the second.
 
 ---
 
@@ -461,7 +554,47 @@ From this point you will see:
 6. Runs `requesting-code-review` — an automated quality gate
 7. Runs `finishing-a-development-branch` — prompts for merge or PR creation
 
-### Step 12: Review the output
+### Step 11.5: The agent logs its execution
+
+While the agent is implementing, it appends to `.ai/traces/AGENT_LOG_REFLECTIONS.md`. You do not need to do anything — this happens automatically per DIRECTIVE 3 in `CLAUDE.md`. Check the log after implementation to see what the agent found confusing.
+
+Example entry it might write:
+
+```
+## [2026-05-23 14:32] Session: 001-user-auth
+Task: Implement JWT refresh token rotation (tasks.md item 4)
+Outcome: COMPLETE
+Frictions: constitution.md did not specify token expiry duration — inferred 24h
+Suggested refinements: Add "JWT_EXPIRY" constant to constitution.md
+```
+
+Read these entries. The frictions the agent logs are the cheapest possible signal: they tell you exactly what to fix in your specs before the next feature starts.
+
+### Step 12: Verify against your gates
+
+Open `.ai/config/VERIFICATION_AND_EVAL_GUIDE.md`. Run the automated checks listed there — linting, tests, coverage thresholds. These are the same checks that will run in CI; catching them locally before code review saves a round-trip.
+
+```bash
+# Example checks (your actual commands will differ based on your stack)
+npm run lint       # Expected: no errors
+npm test           # Expected: all tests pass
+npm run coverage   # Expected: >= 80% coverage
+```
+
+If all pass: proceed to code review. If any fail: fix before requesting review. Do not mark tasks complete against a failing gate.
+
+### Step 13: If something went wrong, write a blameless postmortem
+
+Did the agent generate code that violated your spec? Did a test pass but the feature not work correctly? Open `postmortems/POSTMORTEM_AND_LEARNING_LOG.md` and add an entry.
+
+The format is simple:
+- What happened (observable facts, not blame)
+- What in the process allowed it to happen
+- What you are changing in the spec, constitution, or prompt-skill to prevent recurrence
+
+Do not ask "whose fault is it?" Ask "what in the system allowed this?" Then fix the system. Update the relevant spec or prompt-skill so the same gap cannot cause the same problem on the next feature.
+
+### Step 15: Review the output
 
 While Superpowers works through tasks, your job is to review each task's output:
 
@@ -812,9 +945,29 @@ Use the Iterate extension (`/iterate`). It provides a controlled two-phase proce
 
 Not every line — but you should review strategically. Always read: any code that touches authentication, payment processing, or user data. Always read: any test that covers a security-related acceptance criterion. Skim for style and approach: any file with more than 100 new lines of code. Trust but verify: look at the test count before and after each task — if a task added no tests, ask why.
 
+**Q: What if the agent writes something and I'm not sure if it matches the spec?**
+
+Check `.ai/traces/AGENT_LOG_REFLECTIONS.md` — the agent logged its reasoning, including any decisions it made when the spec was ambiguous. Also run the verification gates in `.ai/config/VERIFICATION_AND_EVAL_GUIDE.md`; they give you a mechanical yes/no answer for each acceptance criterion. If it still does not match, write a blameless postmortem in `postmortems/POSTMORTEM_AND_LEARNING_LOG.md` and update the spec to be more precise before the next feature. The spec was not specific enough — that is a process gap, not a code gap.
+
+**Q: Do I have to fill in all the .ai/ config files before I start?**
+
+No. Start with the defaults from the cookbook. Fill in `AGENT_PROFILE_ROLES.md` with your team's actual roles (which agents run which tasks), and `VERIFICATION_AND_EVAL_GUIDE.md` with your CI pipeline rules (your actual lint command, coverage threshold, required test types). Everything else can be filled in as you learn what your agents need. The flywheel works even with rough initial settings — it just means the first feature surfaces more refinements for you to codify.
+
 ---
 
 ## 11. Glossary
+
+**AI-Native SDLC:** A software development lifecycle where AI agents handle approximately 75% of code generation, and humans focus on intent definition, verification, and governance. The key shift: human value comes from the precision of specifications, not the volume of code written. See also: verification gate, blameless postmortem, continuous improvement flywheel.
+
+**AGENT_LOG_REFLECTIONS.md:** The append-only execution journal at `.ai/traces/AGENT_LOG_REFLECTIONS.md` where AI agents record what they built, where they got confused, and what refinements they suggest. Written automatically during implementation. Read after each feature to identify what to improve in your specs and prompt-skills before the next feature.
+
+**Blameless postmortem:** A structured incident review that asks "what in the system allowed this?" rather than "who is responsible?" Used to improve specs and prompt-skills, not to assign fault. Written to `postmortems/POSTMORTEM_AND_LEARNING_LOG.md`. The output is always a concrete change: update a spec, tighten a constitution rule, or add a prompt-skill.
+
+**Continuous improvement flywheel:** The four-step cycle — Execution → Verification → Learning → Refinement — that makes AI-native teams faster over time, not slower. Each completed feature closes the loop and improves the system's guidance for the next feature. See §2.5 for the full diagram.
+
+**Prompt-skill:** A domain-specific instruction file (e.g., `backend-standards.md`) that agents read during execution to follow team conventions without being told every time. Lives in `.claude-plugin/skills/` or equivalent. Prompt-skills are updated during the Refinement step of the flywheel when agent logs reveal repeated friction.
+
+**Verification gate:** An automated or human check that must pass before work proceeds. Prevents spec drift from reaching production. Defined in `.ai/config/VERIFICATION_AND_EVAL_GUIDE.md`. Examples: linting must be clean, test coverage must be >= 80%, all acceptance criteria from spec.md must be satisfied. A gate that fails stops progress — it does not get waived.
 
 **AI-native development:** A development approach where an AI coding agent implements most of the code, while the human engineer focuses on specifying requirements, reviewing output, and making architectural decisions. Contrast with using AI only for autocomplete (Copilot-style) or using AI for one-shot code generation (ChatGPT-style).
 
@@ -868,5 +1021,9 @@ Use this checklist to confirm you are following the workflow correctly. All item
 - [ ] No existing tests were deleted or weakened to make new code pass
 - [ ] `constitution.md` was updated before any new dependency was added — no surprise entries in `package.json`
 - [ ] You manually tested at least the primary acceptance criterion from `spec.md` before marking the feature done
+- [ ] After each feature, `.ai/traces/AGENT_LOG_REFLECTIONS.md` has a new entry the agent wrote — and you read it
+- [ ] At least one postmortem has been written (even for a small incident) and the fix was codified back into a spec or `constitution.md`
+- [ ] The second feature took measurably less back-and-forth than the first — the flywheel is turning
+- [ ] You can open `AGENT_LOG_REFLECTIONS.md` and understand exactly where the agent had uncertainty during the last feature
 
 **If any item is unchecked:** stop, identify which step was skipped, and go back to it before proceeding. A skipped step in planning costs 10x more to fix during review than catching it at the right moment.
