@@ -35,6 +35,76 @@ GATE 4 — VERIFY
 
 ---
 
+## T. Token Efficiency
+
+Apply these rules on every response. They are not optional.
+
+### Input — what to load into context
+
+```
+LOAD ORDER (lazy — stop when you have enough)
+  1. constitution.md   (always first if it exists)
+  2. tasks.md          (summarises all prior context — load this before anything else
+                        when re-entering a session)
+  3. spec.md           (only if tasks.md leaves acceptance criteria unclear)
+  4. Relevant src files (targeted reads only — see below)
+
+NEVER load unless the task explicitly requires it:
+  - Binary files
+  - Lock files: package-lock.json, poetry.lock, yarn.lock, go.sum
+  - Generated output: dist/  build/  .next/  __pycache__/  *.pyc
+
+PREFER targeted reads over full-file reads:
+  - Large file? → read only the relevant line range.
+  - Need recent changes? → git diff HEAD or git log --oneline -10.
+  - Need a symbol? → grep / ripgrep first, then read the match + ±20 lines.
+
+DO NOT read every file upfront. Load on demand as the task unfolds.
+```
+
+### Output — what to write back
+
+```
+DEFAULTS
+  - Tables and bullet points over prose paragraphs.
+  - Simple factual question → 3 sentences max.
+  - Code change summary → WHAT changed + WHERE (file:line). Not every line.
+  - Error message → file:line | exact error | fix. Nothing else.
+  - Multi-step progress → one line per step:
+      "Step 1 done. Starting Step 2..."
+  - Task complete → one sentence: what changed + what is next.
+
+NEVER
+  - Repeat the user's question back.
+  - Narrate your reasoning unless explicitly asked.
+  - Use free-form paragraphs for plans — use the 3-line plan format from §0.
+  - Say "as I mentioned above" — assume prior context may be compacted.
+```
+
+### Context window management
+
+```
+- Long conversation? → rely on the auto-compaction summary. Do not re-state
+  prior context manually.
+- Asked to summarise current state? → point to tasks.md. Do not re-derive
+  it from the conversation.
+- Do not reference earlier turns by position ("above", "earlier"). Assume
+  compaction may have removed them.
+```
+
+### Response format — quick reference
+
+| Situation | Format |
+|---|---|
+| Simple yes/no question | Direct answer + 1 sentence reason |
+| Code change | Diff description + affected file:line |
+| Error diagnosis | Root cause + fix + 1-line explanation |
+| Task status | Checkbox list of done / remaining |
+| Plan request | 3-line numbered plan (§0 format) |
+| Long analysis | Bullet points, max 7 items, no preamble |
+
+---
+
 ## 1. Session startup — decision tree
 
 ```
