@@ -10,6 +10,9 @@ This cookbook provides an opinionated engineering workflow that combines **[Spec
 
 The diagram below shows how the workflow is split: Spec-Kit manages specification and planning, while Superpowers drives isolated test-driven implementation.
 
+> [!TIP]
+> **Interactive Version Available:** You can also explore this workflow, inspect agent profiles, view verification gates, and interact with community extensions in the **[Cookbook Explorer](https://cloudbloqavi.github.io/ai-engineering-cookbook/design/cookbook-explorer.html)** (hosted on GitHub Pages, or view [locally](./design/README.md)).
+
 ```mermaid
 graph TD
     subgraph Spec-Kit Phase: What to Build
@@ -37,6 +40,7 @@ To make this cookbook easy to navigate, we have broken down the comprehensive gu
 
 | Guide | Description | Key Focus |
 | :--- | :--- | :--- |
+| **🎨 [Cookbook Explorer](https://cloudbloqavi.github.io/ai-engineering-cookbook/design/cookbook-explorer.html) ([Local](./design/README.md))** | Interactive visual companion to explore the cookbook. | Interactive SDLC, agents, verification gates, and extensions |
 | **🚀 [Quickstart Guide](./QUICKSTART.md)** | Start here! Launch your first AI-native feature in 5 minutes. | CLI cheatsheet, 3-step setup |
 | **📦 [Installation & Setup](./docs/installation.md)** | Prerequisites and global configuration steps. | uv, specify-cli, plugins |
 | **🌱 [Greenfield Workflows](./docs/greenfield.md)** | Building new features and applications from scratch. | Next.js Expense Tracker example |
