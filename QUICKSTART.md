@@ -1,0 +1,142 @@
+# Quickstart: Zero to AI-Native Feature in 5 Minutes
+
+Welcome! This guide is designed to get you set up and running your first AI-implemented feature using **Spec-Kit** (planning) and **Superpowers** (execution) as quickly as possible. No prior AI engineering background is required.
+
+---
+
+## 🚀 3-Step Setup
+
+### Step 1: Install `uv` (Fast Python Package Manager)
+Spec-Kit requires `uv` to manage dependencies. Run the following command:
+
+```bash
+# macOS / Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Windows (PowerShell)
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+### Step 2: Install Spec-Kit
+Install the Spec-Kit CLI globally using `uv`:
+
+```bash
+uv tool install specify-cli --from git+https://github.com/github/spec-kit.git
+```
+
+Verify the installation:
+```bash
+specify --version
+# Expected output: specify-cli x.y.z
+```
+
+### Step 3: Install Superpowers in your Agent
+If you are using **Claude Code**, run this command inside the chat interface:
+
+```
+/plugin install superpowers@claude-plugins-official
+```
+
+> [!TIP]
+> For other agents like Cursor or Gemini CLI, refer to the [Installation Guide](./docs/installation.md).
+
+---
+
+## 🛠 Your First Run (Greenfield Example)
+
+Let's build a small CLI calculator project to see the workflow in action.
+
+### 1. Initialize the Project
+Create an empty folder and initialize Spec-Kit:
+
+```bash
+mkdir cli-calculator
+cd cli-calculator
+specify init . --integration claude
+```
+
+### 2. Set Up Your Constitution
+Define the tech stack and guidelines that the agent must adhere to:
+
+```
+/speckit.constitution Create principles:
+  - Tech stack: Node.js, Jest for unit testing
+  - Constraint: Keep code structure minimal, standard ES modules
+```
+
+### 3. Specify the Feature
+Describe what you want to build. Spec-Kit will write the specifications:
+
+```
+/speckit.specify Build a simple calculator that performs addition and subtraction.
+```
+*This creates the `.specify/specs/001-simple-calculator/spec.md` file and a new Git branch.*
+
+### 4. Clarify & Plan
+Let Spec-Kit ask questions and generate the step-by-step tasks:
+
+```
+/speckit.clarify
+# Respond to questions, then plan and generate tasks:
+/speckit.plan
+/speckit.tasks
+```
+*This generates a `tasks.md` file, which is our formal checklist.*
+
+### 5. Start Execution (The Handoff)
+Copy and paste the following handoff message to your coding agent:
+
+```text
+Use the implementation plan in:
+  .specify/specs/001-simple-calculator/tasks.md
+
+Constraints:
+  - Do not generate a new plan
+  - Do not create a new git branch (already created by Spec-Kit)
+  - Write tests before implementation code (TDD)
+```
+
+Superpowers will automatically launch an isolated workspace (worktree), run the tests, write failing tests (RED), implement the code (GREEN), and refactor (REFACTOR) for each task in sequence.
+
+---
+
+## ⚡ Command & Skill Cheatsheet
+
+### Spec-Kit Commands (You Run These)
+| Command | Purpose | Output File |
+| :--- | :--- | :--- |
+| `/speckit.constitution` | Set project-wide rules & tech stack | `constitution.md` |
+| `/speckit.specify <idea>` | Describe feature delta / requirements | `spec.md` |
+| `/speckit.clarify` | Run interactive Q&A to resolve ambiguities | Appends to `spec.md` |
+| `/speckit.plan` | Design technical approach & files | `plan.md` |
+| `/speckit.tasks` | Convert plan into a checklist | `tasks.md` (Handoff) |
+
+### Superpowers Skills (Triggered Automatically)
+| Skill | Activates When... | Responsibility |
+| :--- | :--- | :--- |
+| `using-git-worktrees` | Handoff message is received | Creates isolated development environments |
+| `subagent-driven-development` | Checklist is ready | Dispatches a focused subagent per task |
+| `test-driven-development` | Implementation starts | Enforces RED ➔ GREEN ➔ REFACTOR cycles |
+| `requesting-code-review` | Task/Feature completes | Quality gate for spec and code reviews |
+
+---
+
+## ⚠️ Essential Rules of the Road
+
+> [!IMPORTANT]
+> **1. Intent First, Code Second**  
+> If the agent is unsure about a design decision, it must stop and ask. It's much cheaper to clarify than to refactor generated code.
+>
+> **2. The Handoff is Sacred**  
+> Never start implementing without pasting the handoff message. Otherwise, the agent will replan, creating duplicate files and git branches.
+>
+> **3. Enforce the TDD Loop**  
+> Never skip the RED phase (the failing test). A test that doesn't fail before the code is implemented is not verifying the feature.
+
+---
+
+### 📖 Next Steps
+- Learn more about the stack requirements: [Installation & Setup](./docs/installation.md)
+- Walk through a complex project from scratch: [Greenfield Guide](./docs/greenfield.md)
+- Add AI workflows to an existing app: [Brownfield Guide](./docs/brownfield.md)
+- Learn about the governance layer: [AI Observability & Roles](./docs/governance.md)

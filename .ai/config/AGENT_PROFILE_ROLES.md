@@ -60,11 +60,11 @@
 - `.specify/specs/<feature>/tasks.md`
 
 **Produces (outputs):**
-- Handoff messages to Coder (see SUPERPOWERS_SPECKIT_COOKBOOK.md §9)
+- Handoff messages to Coder (see docs/greenfield.md or docs/brownfield.md)
 - Escalation notices to the user when gates fail
 
 **Handoff protocol:**
-- Issue the standard handoff message (SUPERPOWERS_SPECKIT_COOKBOOK.md §9) when `tasks.md` is confirmed ready
+- Issue the standard handoff message (see docs/greenfield.md or docs/brownfield.md) when `tasks.md` is confirmed ready
 - After each task cycle, confirm Coder has appended to `.ai/traces/AGENT_LOG_REFLECTIONS.md`
 
 ---

@@ -1,7 +1,7 @@
 # CLAUDE.md
 <!-- Auto-loaded by Claude Code. Authoritative for this session. ~160 lines. -->
 <!-- Spec-Kit docs: .specify/  |  Superpowers skills: .claude-plugin/skills/ -->
-<!-- Full cookbook: SUPERPOWERS_SPECKIT_COOKBOOK.md -->
+<!-- Full cookbook: README.md | Quickstart: QUICKSTART.md -->
 
 ---
 
