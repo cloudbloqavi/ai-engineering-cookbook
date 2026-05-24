@@ -6,12 +6,19 @@ This cookbook provides an opinionated engineering workflow that combines **[Spec
 
 ---
 
+## 🎨 Interactive Cookbook Explorer
+
+The AI Engineering Cookbook is accompanied by a modern, interactive web application that provides a comprehensive visual walkthrough of the entire agentic SDLC workflow, agent profiles, verification gates, and community extensions.
+
+👉 **[Explore the Interactive Cookbook Explorer](https://cloudbloqavi.github.io/ai-engineering-cookbook/design/cookbook-explorer.html)** (hosted on GitHub Pages, or view the [local code and guides](./design/README.md))
+
+[![Cookbook Explorer Preview](./design/explorer_preview.png)](https://cloudbloqavi.github.io/ai-engineering-cookbook/design/cookbook-explorer.html)
+
+---
+
 ## 🗺️ Visual SDLC Workflow
 
 The diagram below shows how the workflow is split: Spec-Kit manages specification and planning, while Superpowers drives isolated test-driven implementation.
-
-> [!TIP]
-> **Interactive Version Available:** You can also explore this workflow, inspect agent profiles, view verification gates, and interact with community extensions in the **[Cookbook Explorer](https://cloudbloqavi.github.io/ai-engineering-cookbook/design/cookbook-explorer.html)** (hosted on GitHub Pages, or view [locally](./design/README.md)).
 
 ```mermaid
 graph TD
