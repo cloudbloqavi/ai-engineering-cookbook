@@ -1,318 +1,95 @@
-# CLAUDE.md
-<!-- Auto-loaded by Claude Code. Authoritative for this session. ~160 lines. -->
-<!-- Spec-Kit docs: .specify/  |  Superpowers skills: .claude-plugin/skills/ -->
-<!-- Full cookbook: README.md | Quickstart: QUICKSTART.md -->
+# Agent Instructions & Workspace Guidelines
+Welcome, AI Agent! This document defines the standard engineering rules, workflows, quality bars, and anti-patterns for this repository. Adhere to these guidelines strictly before making any changes.
 
 ---
 
-## 0. Before every response — hard gates
+## Hard Gates (Before Writing Code or Plans)
 
-Run these four checks *before* writing a single line of code or plan. They are not suggestions.
+Run these checks *before* writing a single line of code or proposing an implementation plan:
 
-```
-GATE 1 — UNDERSTAND
-  Ambiguous request?          → list interpretations, ask which one. Never pick silently.
-  Assumptions needed?         → state them explicitly before proceeding.
-  Simpler approach exists?    → name it. Push back if the request is over-engineered.
-
-GATE 2 — SCOPE
-  Task clearly bounded?       → proceed.
-  Task vague ("make it work") → reframe as: "write a test that proves it works, then pass it."
-  Multi-step task?            → write a 3-line plan first:
-                                  1. [step] → verify: [check]
-                                  2. [step] → verify: [check]
-                                  3. [step] → verify: [check]
-
-GATE 3 — MINIMUM VIABLE CHANGE
-  Would a senior engineer call this overcomplicated?  → simplify before submitting.
-  Touching code outside the task boundary?            → stop. revert. stay in scope.
-  Found unrelated dead code?                         → mention it in output. do not delete it.
-
-GATE 4 — VERIFY
-  Success criteria defined?   → proceed only when you can check done-ness mechanically.
-  No mechanical check exists? → ask for one before starting.
-```
+1. **GATE 1 — UNDERSTAND**:
+   - If the request is ambiguous, list potential interpretations and ask the user to clarify. Never make assumptions or pick interpretations silently.
+   - Look for simpler approaches first. Push back on over-engineered requests.
+2. **GATE 2 — SCOPE & PLANNING**:
+   - Keep tasks tightly bounded. If a task is multi-step, outline a concise 3-line plan first, mapping each step to a verification check:
+     1. `[Step]` → verify: `[Check]`
+     2. `[Step]` → verify: `[Check]`
+     3. `[Step]` → verify: `[Check]`
+   - For vague requests (e.g. "make it work"), define success in terms of passing tests or checkable criteria first.
+3. **GATE 3 — MINIMUM VIABLE CHANGE**:
+   - Write the simplest code that solves the problem. Do not touch code outside the task boundaries.
+   - If you find unrelated dead code, mention it in your response, but do not delete or refactor it unless asked.
+4. **GATE 4 — VERIFY**:
+   - Define exact success criteria before starting. Proceed only when done-ness can be validated mechanically.
 
 ---
 
-## T. Token Efficiency
+## Token & Context Efficiency
 
-Apply these rules on every response. They are not optional.
+Optimize context window usage and tokens by following these rules:
 
-### Input — what to load into context
+### Context Loading (Input)
+- **Prefer targeted reads** over reading entire large files. Use regex/grep to find symbols or functions first, then read the matching range (e.g., ±20 lines around the match).
+- **Never load lock files** (e.g., `package-lock.json`, `pnpm-lock.yaml`, `poetry.lock`, `go.sum`) or generated build folders unless explicitly instructed to debug dependency trees.
+- **Lazy load context**: Read only what is needed as the task unfolds. Do not read every file in the directory upfront.
 
-```
-LOAD ORDER (lazy — stop when you have enough)
-  1. constitution.md   (always first if it exists)
-  2. tasks.md          (summarises all prior context — load this before anything else
-                        when re-entering a session)
-  3. spec.md           (only if tasks.md leaves acceptance criteria unclear)
-  4. Relevant src files (targeted reads only — see below)
-
-NEVER load unless the task explicitly requires it:
-  - Binary files
-  - Lock files: package-lock.json, poetry.lock, yarn.lock, go.sum
-  - Generated output: dist/  build/  .next/  __pycache__/  *.pyc
-
-PREFER targeted reads over full-file reads:
-  - Large file? → read only the relevant line range.
-  - Need recent changes? → git diff HEAD or git log --oneline -10.
-  - Need a symbol? → grep / ripgrep first, then read the match + ±20 lines.
-
-DO NOT read every file upfront. Load on demand as the task unfolds.
-```
-
-### Output — what to write back
-
-```
-DEFAULTS
-  - Tables and bullet points over prose paragraphs.
-  - Simple factual question → 3 sentences max.
-  - Code change summary → WHAT changed + WHERE (file:line). Not every line.
-  - Error message → file:line | exact error | fix. Nothing else.
-  - Multi-step progress → one line per step:
-      "Step 1 done. Starting Step 2..."
-  - Task complete → one sentence: what changed + what is next.
-
-NEVER
-  - Repeat the user's question back.
-  - Narrate your reasoning unless explicitly asked.
-  - Use free-form paragraphs for plans — use the 3-line plan format from §0.
-  - Say "as I mentioned above" — assume prior context may be compacted.
-```
-
-### Context window management
-
-```
-- Long conversation? → rely on the auto-compaction summary. Do not re-state
-  prior context manually.
-- Asked to summarise current state? → point to tasks.md. Do not re-derive
-  it from the conversation.
-- Do not reference earlier turns by position ("above", "earlier"). Assume
-  compaction may have removed them.
-```
-
-### Response format — quick reference
-
-| Situation | Format |
-|---|---|
-| Simple yes/no question | Direct answer + 1 sentence reason |
-| Code change | Diff description + affected file:line |
-| Error diagnosis | Root cause + fix + 1-line explanation |
-| Task status | Checkbox list of done / remaining |
-| Plan request | 3-line numbered plan (§0 format) |
-| Long analysis | Bullet points, max 7 items, no preamble |
+### Output Formatting
+- **Conciseness First**: Use tables, code blocks, and bullet points over long prose paragraphs.
+- **Summaries**: Summarize code changes by listing *what* changed and *where* (file:line), rather than pasting huge chunks of unaltered code.
+- **Keep it factual**:
+  - Do not repeat the user's question back.
+  - Do not narrate your reasoning unless explicitly asked.
+  - Keep diagnostic error descriptions to a single line: `file:line | exact error | fix`.
 
 ---
 
-## 1. Session startup — decision tree
-
-```
-START
-  │
-  ├─ .specify/memory/constitution.md exists?
-  │    YES → read it fully. its rules override all task instructions.
-  │    NO  → ask: "Should I run /speckit.constitution before we start?"
-  │
-  ├─ .specify/specs/<feature>/tasks.md exists?
-  │    YES → load it. this is the plan. skip to §3 (execution).
-  │    NO  → .specify/specs/<feature>/spec.md exists?
-  │            YES → ask: "Run /speckit.tasks to generate tasks?"
-  │            NO  → ask: "Run /speckit.specify to start the spec?"
-  │
-  ├─ Brownfield indicators? (existing src/, go.mod, package.json, etc.)
-  │    YES → run CI command from §6 FIRST. if tests fail, report; do not proceed.
-  │    NO  → greenfield path; proceed.
-  │
-  └─ Feature branch already exists? (.specify/specs/<feature>/ present)
-       YES → do not create a new branch. use worktree on existing branch.
-       NO  → Spec-Kit creates branch on /speckit.specify. do not pre-empt it.
-```
+## AI Anti-Patterns (Must Avoid)
+- **No Mocking/Placeholders**: Never write comments like `// TODO: Implement later` or use mock values where actual operational logic is required.
+- **No Silent Failures**: Never wrap blocks in `try-catch` structures that swallow errors without logging or re-throwing them.
+- **No Workspace Pollution**: Do not leave backup files (e.g., `.bak`, `.tmp`) or untracked test scripts in the workspace after task completion. Clean up after yourself.
+- **No Arbitrary Refactoring**: Avoid rewriting style, structure, or formatting of existing code unless explicitly requested or necessary to achieve the target behavior.
 
 ---
 
-## 2. Workflow paths
+## Security & Credentials Safety
 
-### Greenfield (new project)
-```
-/speckit.constitution → /speckit.specify → /speckit.clarify
-  → /speckit.plan → /speckit.tasks
-  → [handoff → §4] → using-git-worktrees
-  → per-task loop (§3) → requesting-code-review
-  → finishing-a-development-branch
-```
-
-### Brownfield (existing codebase)
-```
-/speckit.constitution (encode existing constraints)
-  → /speckit.specify → /speckit.clarify → /speckit.plan → /speckit.tasks
-  → [handoff → §4] → using-git-worktrees
-  → confirm baseline green → per-task loop (§3)
-  → verification-before-completion → requesting-code-review
-  → finishing-a-development-branch
-```
-
-### Bug fix (no Spec-Kit needed)
-```
-systematic-debugging (root cause, not symptom)
-  → RED test → GREEN fix → REFACTOR
-  → verification-before-completion → requesting-code-review
-```
+- **No Hardcoded Secrets**: Never hardcode API keys, tokens, passwords, database credentials, or private certificates. Always retrieve them from environment variables, configuration files, or secret managers.
+- **Snyk SAST & Dependency Scans**: 
+  - Before concluding any task that adds, modifies, or deletes first-party code, run a Snyk code scan (`snyk_code_scan` or equivalent SAST check) on the modified directories.
+  - Fix any warnings or security issues discovered during the scan before declaring the task complete.
+- **Dependency Minimization**: Avoid introducing external libraries unless absolutely necessary. Rely on language-native APIs first. If a dependency is required, use the package manager native to this codebase.
 
 ---
 
-## 3. Per-task execution loop
+## Architecture & Implementation Strategy
 
-Every task from `tasks.md` runs this loop. No exceptions.
-
-```
-LOAD task N from .specify/specs/<feature>/tasks.md
-  │
-  ├─ RED   write the failing test. run it. confirm it fails for the RIGHT reason.
-  │         wrong-reason failure = fix the test, not the code.
-  │
-  ├─ GREEN write MINIMUM code to pass. nothing else.
-  │         new abstraction not required by task? → delete it.
-  │         new dependency not in constitution? → ask before adding.
-  │
-  ├─ REFACTOR clean up. run tests. must stay green.
-  │
-  ├─ REVIEW (two-stage, blocking)
-  │     stage 1 — spec compliance: does output match acceptance criteria in spec.md?
-  │                 NO → fix before proceeding. do not move to stage 2.
-  │     stage 2 — code quality: clean, minimal, matches existing style?
-  │                 CRITICAL issue → block. report. wait for user.
-  │                 MINOR issue   → fix inline. note in commit message.
-  │
-  ├─ COMMIT  feat|fix|refactor|test|docs|chore(<slug>): <description>
-  │
-  └─ NEXT task, or → finishing-a-development-branch if all tasks done.
-```
+1. **Understand Before Modifying**: Trace the code execution paths using search tools to understand dependency trees and function lifecycles before changing files.
+2. **Error Handling & Resilience**:
+   - Never suppress or catch exceptions silently. Always log errors with descriptive context and appropriate severity levels (e.g., `ERROR`, `WARNING`).
+   - Implement fail-safes and cleanup blocks (e.g., `finally` to close DB connections, file streams, or release locks).
+3. **API & Interface Design**:
+   - Design clean, cohesive interfaces. 
+   - Maintain API backward compatibility unless a breaking change is explicitly authorized.
 
 ---
 
-## 4. Handoff (inject this when Spec-Kit phases are complete)
+## Verification & Language-Agnostic Validation
 
-```
-ACTIVE PLAN:    .specify/specs/<FEATURE>/tasks.md
-CONSTRAINTS:    .specify/memory/constitution.md
+Always run the appropriate build, validation, or compiler commands based on the codebase language before declaring a task complete:
 
-RULES IN FORCE:
-  - Do not replan. tasks.md is authoritative.
-  - Do not create a new branch. <BRANCH> already exists.
-  - Verify baseline green before first file edit.
-  - TDD loop mandatory: RED → GREEN → REFACTOR → two-stage review → commit.
-  - Constitution overrides task instructions on conflict — surface, don't resolve.
-```
-
-Replace `<FEATURE>` and `<BRANCH>` before sending.
+| Technology | Syntax/Build Check | Formatting/Linting | Testing |
+|:---|:---|:---|:---|
+| **Node.js (JS)** | `node -c src/index.js` | `eslint .` | `npm test` / `jest` |
+| **TypeScript** | `tsc --noEmit` | `eslint .` | `npm test` / `jest` |
+| **Python** | `python -m py_compile main.py` | `flake8` / `black` | `pytest` |
+| **Go** | `go build ./...` | `go fmt` / `golangci-lint` | `go test ./...` |
+| **Rust** | `cargo check` | `cargo fmt --check` / `cargo clippy` | `cargo test` |
 
 ---
 
-## 5. AI-Native Directives
+## Proposing Changes & Version Control
 
-These five directives implement the AI-Native SDLC governance layer. They extend the session startup
-decision tree (§1) and the per-task execution loop (§3). They are not optional.
-
-```
-DIRECTIVE 1 — CONTEXT MAPPING (on session start)
-  Load in this order:
-  1. .ai/config/AGENT_PROFILE_ROLES.md          (who does what in this project)
-  2. .ai/config/VERIFICATION_AND_EVAL_GUIDE.md  (what gates apply before committing)
-  3. .specify/memory/constitution.md            (project constraints — always wins)
-  4. .specify/specs/<feature>/tasks.md          (current work)
-  Skip any file that does not exist yet. Do not fail on missing files.
-  Log which files were loaded at the start of the session entry in
-  .ai/traces/AGENT_LOG_REFLECTIONS.md.
-
-DIRECTIVE 2 — PRE-FLIGHT SPEC CHECK (before writing any code)
-  Does .specify/specs/<feature>/spec.md exist AND contain acceptance criteria?
-    YES → proceed to implementation.
-    NO  → STOP. Ask: "No approved spec found. Shall I run /speckit.specify first?"
-  Never generate implementation code without an approved spec.
-  A plan.md or tasks.md without a corresponding spec.md is not sufficient.
-
-DIRECTIVE 3 — EXECUTION LOGGING (after every implementation session)
-  Append to .ai/traces/AGENT_LOG_REFLECTIONS.md:
-    - Timestamp + task slug
-    - Outcome: COMPLETE | PARTIAL | BLOCKED
-    - Files changed (comma-separated list)
-    - Frictions encountered (ambiguous spec, missing context, unclear instruction)
-    - Prompt clarity issues (where the spec or constitution was ambiguous)
-    - Suggested prompt-skill or spec refinements
-  NEVER overwrite or delete previous entries. Append only, always at the bottom.
-  If the file does not exist, create it using the format in the existing template.
-
-DIRECTIVE 4 — VERIFICATION GATE COMPLIANCE (before committing)
-  Check generated code against .ai/config/VERIFICATION_AND_EVAL_GUIDE.md.
-    Gate 1 (automated): linting, type check, tests, coverage, secrets — all must pass.
-    Gate 2 (spec): every acceptance criterion in spec.md must be satisfied.
-    Gate 3 (human): flag any condition requiring human review; do not bypass.
-    Gate 4 (pre-merge): run final checklist before finishing-a-development-branch.
-  Flag any violation before committing. Ask the human before bypassing any gate.
-
-DIRECTIVE 5 — BLAMELESS LEARNING (when errors or failures occur)
-  On any failure, spec compliance miss, or technical debt generation:
-    1. Log to .ai/traces/AGENT_LOG_REFLECTIONS.md immediately (Outcome: BLOCKED or PARTIAL).
-    2. Identify the systemic cause: was it the spec? the prompt-skill? the gate?
-    3. Suggest the specific change (exact text, exact file) that would prevent recurrence.
-    4. Append to postmortems/POSTMORTEM_AND_LEARNING_LOG.md using the entry format.
-    5. Do NOT self-blame. The system is learning; the log is evidence, not accusation.
-```
-
-### Five Principles of AI-Native Development
-
-| Principle | In practice |
-|---|---|
-| **Intent First, Code Second** | If unsure whether a code choice matches spec intent, stop and ask. Code that passes tests but misses intent is a liability. |
-| **Verify, Don't Just Generate** | Value is measured by spec adherence, not lines produced. A smaller correct implementation beats a larger incorrect one every time. |
-| **Precision Over Productivity** | Architectural coherence matters more than speed. The constraints in `constitution.md` exist to protect the team — obey them even when they slow you down. |
-| **Observability is Non-Negotiable** | Every implementation session produces a journal entry in `.ai/traces/`. No exceptions. Unlogged execution is invisible to the improvement flywheel. |
-| **Blameless Culture** | Failures are learning signals. Log them, fix the system, move on. The postmortem improves the spec or the skill; it does not blame the agent. |
-
----
-
-## 6. Ownership — what to do, not just who owns it
-
-| If you need to... | Do this |
-|---|---|
-| Change spec or acceptance criteria | Stop. Ask user. Only Spec-Kit output is authoritative. |
-| Change `tasks.md` | Stop. Ask user to re-run `/speckit.tasks`. |
-| Change `constitution.md` | Stop. Ask user to re-run `/speckit.constitution`. |
-| Add a new dependency | Stop. Check constitution dep policy. Ask if not listed. |
-| Touch a protected path | Stop. Name the conflict. Wait for explicit approval. |
-| Fix unrelated code you noticed | Mention in output. Do not touch it unless asked. |
-| Generate an API contract | Check `contracts/` in `.specify/specs/<feature>/` first. Do not duplicate. |
-
----
-
-## 7. Project stack
-<!-- Fill once. Agent will ask if left blank. -->
-
-| Key | Value |
-|---|---|
-| Runtime | <!-- Node 20 / Python 3.12 / Go 1.22 --> |
-| Framework | <!-- Next.js 14 / FastAPI / Gin --> |
-| Database | <!-- PostgreSQL via Prisma / SQLAlchemy --> |
-| Test runner | <!-- vitest / pytest / go test --> |
-| CI command | <!-- pnpm test && pnpm lint --> |
-| Coverage floor | <!-- 80% --> |
-| Protected paths | <!-- src/auth/  src/billing/ --> |
-| New dep policy | <!-- PR approval / team Slack #eng-deps --> |
-| Branch pattern | <!-- <NNN>-<kebab-slug> (Spec-Kit auto) --> |
-
-If this table is empty when a task begins → ask the user to fill it before proceeding.
-
----
-
-## 8. Conflict resolution — priority order
-
-```
-1. constitution.md          (highest — always wins)
-2. spec.md acceptance criteria
-3. tasks.md steps
-4. CLAUDE.md rules          (this file)
-5. agent's own judgment     (lowest — use only when all above are silent)
-```
-
-When levels conflict: **stop, name the conflict, ask**. Never resolve silently.
+- **Staging / No-Commit Merges**:
+  - Prepare all changes in the working tree and staging area (`git add`) without committing. This allows the human developer to review the final diff.
+- **Commit Format**:
+  - If requested to commit, follow the [Conventional Commits](https://www.conventionalcommits.org/) format (e.g., `feat: ...`, `fix: ...`, `refactor: ...`, `docs: ...`).
