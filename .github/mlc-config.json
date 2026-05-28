@@ -1,0 +1,20 @@
+{
+  "ignorePatterns": [
+    {
+      "pattern": "^https://github.com/github/spec-kit"
+    },
+    {
+      "pattern": "^https://github.com/obra/superpowers"
+    },
+    {
+      "pattern": "^https://astral.sh"
+    },
+    {
+      "pattern": "^https://cloudbloqavi.github.io"
+    }
+  ],
+  "aliveStatusCodes": [200, 206, 429],
+  "timeout": "10s",
+  "retryOn429": true,
+  "retryCount": 2
+}

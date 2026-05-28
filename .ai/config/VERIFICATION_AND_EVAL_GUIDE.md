@@ -31,13 +31,12 @@ GATE 4 — Final Pre-Merge Checks
 
 Run these on every commit. Configure in CI; also run locally before pushing.
 
-| Check | Command (fill in for your stack) | Threshold | Fail action |
+| Check | Command | Threshold | Fail action |
 |---|---|---|---|
-| Linting | `<!-- e.g. pnpm lint / ruff check . -->` | Zero errors | Block commit |
-| Type checking | `<!-- e.g. tsc --noEmit / mypy src/ -->` | Zero type errors | Block commit |
-| Unit tests | `<!-- e.g. pnpm test / pytest -->` | All pass | Block commit |
-| Test coverage | `<!-- e.g. pnpm test --coverage -->` | ≥ floor in `constitution.md` | Block commit |
-| Secret scanning | `<!-- e.g. git-secrets / trufflehog -->` | Zero secrets | Block commit, alert user |
+| Markdown linting | `markdownlint "**/*.md" --ignore node_modules --ignore ".specify/**"` | Zero errors | Block commit |
+| Broken link check | `find . -name "*.md" \| xargs markdown-link-check --config .github/mlc-config.json` | Zero broken links | Block commit |
+| Spell check | `cspell "**/*.md" --config .github/cspell.json` | Zero unknown words | Block commit, alert user |
+| Secret scanning | `trufflehog filesystem . --only-verified` | Zero secrets | Block commit, alert user |
 
 **To configure for your project:** Replace the `<!-- ... -->` placeholders with your actual commands.
 These must match the `CI command` field in `CLAUDE.md §6`.

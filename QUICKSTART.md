@@ -17,6 +17,12 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
+> [!NOTE]
+> **Windows users:** After installing `uv`, close and reopen your terminal before continuing. To reload the PATH without restarting, run:
+> ```powershell
+> $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("PATH","User")
+> ```
+
 ### Step 2: Install Spec-Kit
 Install the Spec-Kit CLI globally using `uv`:
 
@@ -92,11 +98,24 @@ Use the implementation plan in:
 
 Constraints:
   - Do not generate a new plan
+    (Spec-Kit already generated the authoritative plan — regenerating wastes tokens and may contradict the approved spec)
   - Do not create a new git branch (already created by Spec-Kit)
+    (Spec-Kit created and checked out the feature branch during /speckit.specify — creating another would orphan your work)
   - Write tests before implementation code (TDD)
+    (The RED phase — a test that fails before the code exists — is proof that the test actually verifies something)
 ```
 
-Superpowers will automatically launch an isolated workspace (worktree), run the tests, write failing tests (RED), implement the code (GREEN), and refactor (REFACTOR) for each task in sequence.
+### ✅ What to Expect
+
+Once the handoff message is sent, Superpowers will:
+1. Create an isolated git worktree for this feature
+2. Pick up Task 1 from `tasks.md`
+3. Write a **failing test** (RED phase) — you'll see test output showing a failure
+4. Write the minimum code to make the test pass (GREEN phase)
+5. Clean up the code without breaking the test (REFACTOR phase)
+6. Commit the task and move to Task 2
+
+You don't need to do anything during this process. Monitor the output and step in only if the agent pauses and asks a clarifying question.
 
 ---
 
@@ -140,3 +159,5 @@ Superpowers will automatically launch an isolated workspace (worktree), run the 
 - Walk through a complex project from scratch: [Greenfield Guide](./docs/greenfield.md)
 - Add AI workflows to an existing app: [Brownfield Guide](./docs/brownfield.md)
 - Learn about the governance layer: [AI Observability & Roles](./docs/governance.md)
+- Hit a problem? Check the [Troubleshooting Guide](./docs/troubleshooting.md)
+- Don't know a term? See the [Glossary](./GLOSSARY.md)

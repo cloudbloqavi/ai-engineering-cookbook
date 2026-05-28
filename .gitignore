@@ -86,3 +86,6 @@ temp/
 scratch/
 
 SCRATCHPAD.md
+
+# Claude Code internals
+.claude/
