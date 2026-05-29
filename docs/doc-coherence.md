@@ -6,9 +6,15 @@ A portable Agent Skill that kills cross-document drift — the failure mode wher
 
 ## 📦 Install
 
+Install the skill directly in your target repository using `npx`:
+
 ```bash
-npx github:cloudbloqavi/ai-engineering-cookbook install-doc-coherence
+npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence
 ```
+
+> **💡 Note on `npx` execution:** Since this cookbook packages multiple tools, we use `npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence` as a single router entry point. This downloads and runs the installer directly without polluting your global node_modules. Requires **Node.js 18+**.
+>
+> *(Alternatively, you can install globally with `npm install -g github:cloudbloqavi/ai-engineering-cookbook` and then run `install-doc-coherence` directly.)*
 
 Installs `skills/doc-coherence/SKILL.md` into the tool's skills directory (default `./.claude/skills/doc-coherence/`). The same `SKILL.md` works across every Agent-Skills-compatible tool; only the install folder differs. Unlike prompt-optimizer, this skill ships **no session-start hook** — enforcement happens in CI, not on every prompt.
 
@@ -19,6 +25,39 @@ Installs `skills/doc-coherence/SKILL.md` into the tool's skills directory (defau
 | `--user` | Install to the user-global skills dir instead of the project dir. |
 | `--force` | Overwrite an existing install. |
 | `--dry-run` | Print planned actions; write nothing. |
+
+### Run the installer per tool
+
+```bash
+# Claude Code (default)       → .claude/skills/doc-coherence/
+npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence
+
+# Cursor                      → .cursor/skills/doc-coherence/
+npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence --tool cursor
+
+# Roo Code                    → .roo/skills/doc-coherence/
+npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence --tool roo
+
+# VS Code Copilot (project)   → .github/skills/doc-coherence/
+# VS Code Copilot (global)    → ~/.copilot/skills/doc-coherence/
+#                                (Windows: %APPDATA%\github-copilot\skills\)
+npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence --tool vscode
+npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence --tool vscode --user
+
+# OpenAI Codex (project)      → .codex/skills/doc-coherence/
+# OpenAI Codex (global)       → ~/.codex/skills/doc-coherence/
+npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence --tool codex
+npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence --tool codex --user
+
+# Google Antigravity (project)→ .agents/skills/doc-coherence/
+# Google Antigravity (global) → ~/.gemini/antigravity/skills/doc-coherence/
+npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence --tool antigravity
+npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence --tool antigravity --user
+
+# Any tool that loads SKILL.md from a custom directory
+npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence \
+    --tool custom --target ./my-skills
+```
 
 Requirements: **Node.js 18+** on `PATH`. The CI gate itself (`scripts/check-doc-coherence.js`) is dependency-free Node.
 

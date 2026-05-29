@@ -11,7 +11,7 @@
  * piece is Claude Code–only.
  *
  * Usage:
- *   npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer [options]
+ *   install-prompt-optimizer [options]
  *
  * Options:
  *   --tool <name>   Target tool: claude | cursor | roo | vscode | codex | antigravity | custom.
@@ -52,7 +52,7 @@ if (opts.help) {
       "install-prompt-optimizer — install the Prompt Optimizer skill into your agentic tool",
       "",
       "Usage:",
-      "  npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer [options]",
+      "  install-prompt-optimizer [options]",
       "",
       "Options:",
       "  --tool <name>   claude (default) | cursor | roo | vscode | codex | antigravity | custom",
@@ -65,16 +65,16 @@ if (opts.help) {
       "",
       "Examples:",
       "  # Claude Code, project scope, with auto-gate (default)",
-      "  npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer",
+      "  install-prompt-optimizer",
       "",
       "  # Cursor",
-      "  npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer --tool cursor",
+      "  install-prompt-optimizer --tool cursor",
       "",
       "  # Roo Code",
-      "  npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer --tool roo",
+      "  install-prompt-optimizer --tool roo",
       "",
       "  # Any tool that loads SKILL.md from a custom directory",
-      "  npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer \\",
+      "  install-prompt-optimizer \\",
       "      --tool custom --target ./my-skills",
       "",
     ].join("\n"),
@@ -121,7 +121,7 @@ const TOOL_PROFILES = {
   },
   antigravity: {
     label: "Google Antigravity",
-    skillsDirProject: ".agent/skills",
+    skillsDirProject: ".agents/skills",
     skillsDirUser: path.join(os.homedir(), ".gemini", "antigravity", "skills"),
     supportsUser: true,
     supportsHook: false,

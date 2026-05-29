@@ -13,7 +13,7 @@
  * another doc. There is NO session-start hook for this skill.
  *
  * Usage:
- *   npx github:cloudbloqavi/ai-engineering-cookbook install-doc-coherence [options]
+ *   install-doc-coherence [options]
  *
  * Options:
  *   --tool <name>   Target tool: claude | cursor | roo | vscode | codex | antigravity | custom.
@@ -56,7 +56,7 @@ if (opts.help) {
       "install-doc-coherence — install the Doc Coherence skill + single-source-of-truth gate",
       "",
       "Usage:",
-      "  npx github:cloudbloqavi/ai-engineering-cookbook install-doc-coherence [options]",
+      "  install-doc-coherence [options]",
       "",
       "Options:",
       "  --tool <name>   claude (default) | cursor | roo | vscode | codex | antigravity | custom",
@@ -70,13 +70,13 @@ if (opts.help) {
       "",
       "Examples:",
       "  # Claude Code, project scope, with skill + gate (default)",
-      "  npx github:cloudbloqavi/ai-engineering-cookbook install-doc-coherence",
+      "  install-doc-coherence",
       "",
       "  # Skill + gate + CI workflow",
-      "  npx github:cloudbloqavi/ai-engineering-cookbook install-doc-coherence --with-ci",
+      "  install-doc-coherence --with-ci",
       "",
       "  # Just the skill for Cursor, no gate tooling",
-      "  npx github:cloudbloqavi/ai-engineering-cookbook install-doc-coherence --tool cursor --skill-only",
+      "  install-doc-coherence --tool cursor --skill-only",
       "",
     ].join("\n"),
   );
@@ -117,7 +117,7 @@ const TOOL_PROFILES = {
   },
   antigravity: {
     label: "Google Antigravity",
-    skillsDirProject: ".agent/skills",
+    skillsDirProject: ".agents/skills",
     skillsDirUser: path.join(os.homedir(), ".gemini", "antigravity", "skills"),
     supportsUser: true,
   },
