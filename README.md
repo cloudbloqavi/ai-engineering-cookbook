@@ -65,6 +65,8 @@ graph TD
 | **🛡️ [AI Governance & Observability](./docs/governance.md)** | The SDLC flywheel, logs, postmortems, and agent roles. | reflections, blameless logs |
 | **🧩 [Community Extensions](./docs/extensions.md)** | 20 curated plugins to enhance security, scope, and testing. | Extension maps, decision guide |
 | **🎯 [Prompt Optimizer Skill](./docs/prompt-optimizer.md)** | Production prompt engineering skill + optional session-start gate. Install with `npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer`. | Framework selection, model calibration, scorecard |
+| **🧭 [Context Engineering](./docs/context-engineering.md)** | The 6 Context-Engine principles mapped honestly to this repo's mechanisms. | Conflict resolution, token optimization, scope boundaries |
+| **🔗 [Doc Coherence Skill](./docs/doc-coherence.md)** | Single-source-of-truth registry + CI gate that flags cross-doc drift. Install with `npx github:cloudbloqavi/ai-engineering-cookbook install-doc-coherence`. | Canonical owners, authority order, deterministic gate |
 | **🔧 [Troubleshooting](./docs/troubleshooting.md)** | Common failure scenarios and step-by-step fixes. | Install errors, TDD issues, phantom completions |
 | **📖 [Glossary](./GLOSSARY.md)** | Plain-English definitions for every key term. | 30+ terms from AI Agent to Worktree |
 | **🤝 [Contributing](./CONTRIBUTING.md)** | How to improve the cookbook and add new content. | PR checklist, style guide, extension submissions |
@@ -100,6 +102,23 @@ We enforce five core principles to manage this shift safely:
 3. **Precision Over Productivity**: Architectural consistency protects the codebase. Adhere to project guidelines even if they require extra steps.
 4. **Observability is Non-Negotiable**: Every coding session must record reflections to feed the continuous learning loop.
 5. **Blameless Culture**: Production bugs and gate escapes are system failures. We update spec-rules, check-gates, or prompt-skills to prevent them, rather than blaming the developer or agent.
+
+---
+
+## 📖 Glossary — canonical terms
+
+To prevent the same concept being called different things across docs, these are the canonical names. Use them exactly; everything else points here.
+
+| Term | Means | Not to be confused with |
+| :--- | :--- | :--- |
+| **Spec-Kit** | The product/methodology for spec-driven development. | — |
+| **specify-cli** | The CLI package that installs Spec-Kit (`uv tool install specify-cli`). | the `/speckit.*` commands |
+| **`.specify/`** | The directory Spec-Kit creates for specs, plans, tasks, and constitution. | specify-cli (the tool) |
+| **`/speckit.*`** | The slash commands (`/speckit.specify`, `/speckit.plan`, …). | specify-cli (the tool) |
+| **Superpowers** | The Claude Code plugin (`/plugin install superpowers@…`) providing TDD/worktree skills. | this repo's local `skills/` |
+| **The Five Principles** | The *philosophy* (why) — authored in this README. | the Five Directives |
+| **The Five Directives** | The *operational rules* (how) — authored in [CLAUDE.md](./CLAUDE.md) §5. | the Five Principles |
+| **`skills/`** | Canonical source for this repo's installable skills. | `.claude/skills/` (generated install output — never hand-edited) |
 
 ---
 

@@ -92,6 +92,34 @@ NEVER
   compaction may have removed them.
 ```
 
+### Delegation — orchestrate subagents by default
+
+Treat the main thread as an orchestrator, not a worker. Before doing heavy work
+inline, ask: *would a subagent keep my context fresher or finish this faster?*
+If yes, delegate — you do not need the user to ask first.
+
+```
+DELEGATE to a subagent when:
+  - Exploration/research spanning more than ~2–3 reads or searches
+        → subagent returns a summary; raw output stays out of the main context.
+  - Independent workstreams
+        → launch them in parallel in a single batch, not one after another.
+  - A self-contained subtask whose intermediate output you do not need to see
+        → you only need its result.
+
+DO IT INLINE when:
+  - A single known read / grep / edit — delegation overhead exceeds the work.
+  - Tightly coupled edits that need the full live context to stay correct.
+  - The decision itself — never delegate judgment.
+
+RULES:
+  - Brief every subagent as if it has no history: goal, context, exact paths,
+    expected output shape. It cannot see this conversation.
+  - Synthesize results yourself; verify a subagent's claims before acting on them.
+  - One decision-maker: subagents gather and draft; the main thread decides and
+    integrates.
+```
+
 ### Response format — quick reference
 
 | Situation | Format |

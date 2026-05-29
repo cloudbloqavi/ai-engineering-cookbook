@@ -1,0 +1,31 @@
+name: doc-coherence
+
+# Fails the build when a doc restates a fact owned by another doc
+# (single-source-of-truth / "pointers, not copies"). Deterministic, no secrets.
+
+on:
+  push:
+    paths:
+      - "**/*.md"
+      - "coherence.config.json"
+      - "templates/coherence.config.json"
+      - "scripts/check-doc-coherence.js"
+      - ".github/workflows/doc-coherence.yml"
+  pull_request:
+    paths:
+      - "**/*.md"
+      - "coherence.config.json"
+      - "templates/coherence.config.json"
+      - "scripts/check-doc-coherence.js"
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Check documentation coherence
+        run: node scripts/check-doc-coherence.js
