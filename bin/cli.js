@@ -18,7 +18,9 @@ function showHelp() {
       'Installs portable Agent Skills (SKILL.md) and supporting hooks/gates into your repositories.',
       '',
       '\x1b[1mUsage:\x1b[0m',
-      '  npx github:cloudbloqavi/ai-engineering-cookbook <skill-name> [options]',
+      '  npx ai-engineering-cookbook <skill-name> [options]',
+      '  # Fallback (if installed globally or locally):',
+      '  ai-engineering-cookbook <skill-name> [options]',
       '',
       '\x1b[1mAvailable Skills:\x1b[0m',
       '  \x1b[1mdoc-coherence\x1b[0m     Kills cross-document drift with a single-source-of-truth gate.',
@@ -33,8 +35,9 @@ function showHelp() {
       '  -h, --help       Show help',
       '',
       '\x1b[1mExamples:\x1b[0m',
-      '  npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence',
-      '  npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --tool cursor',
+      '  npx ai-engineering-cookbook doc-coherence',
+      '  npx ai-engineering-cookbook prompt-optimizer --tool cursor',
+      '  ai-engineering-cookbook doc-coherence --dry-run',
       ''
     ].join('\n')
   );

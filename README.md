@@ -57,24 +57,55 @@ graph TD
 
 This repo ships portable **[Agent Skills](https://agentskills.io/specification)** (`SKILL.md`) you can drop into any compatible agentic tool — Claude Code, Cursor, Roo Code, VS Code Copilot, OpenAI Codex, Google Antigravity. The same skill file works everywhere; only the install folder differs.
 
-**Install any skill directly inside your target repository using `npx` (no global installation required):**
+**Install any skill directly inside your target repository using `npx`:**
 
 ```bash
 # Install Doc Coherence
-npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence
+npx ai-engineering-cookbook doc-coherence
 
 # Install Prompt Optimizer
-npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer
+npx ai-engineering-cookbook prompt-optimizer
 ```
 
-*(You can also run `npx github:cloudbloqavi/ai-engineering-cookbook` without arguments for an interactive selection menu.)*
+*(You can also run `npx ai-engineering-cookbook` without arguments for an interactive selection menu.)*
 
 | Skill | What it does | Run inside your repo |
 | :--- | :--- | :--- |
-| **🎯 [Prompt Optimizer](./docs/prompt-optimizer.md)** | Turns vague requests into production-grade prompts — framework selection, model calibration, red-team, scorecard. Optional Claude Code session-start gate. | `npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer` |
-| **🔗 [Doc Coherence](./docs/doc-coherence.md)** | Single-source-of-truth registry + deterministic CI gate that fails the build when one doc restates a fact owned by another. | `npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence` |
+| **🎯 [Prompt Optimizer](./docs/prompt-optimizer.md)** | Turns vague requests into production-grade prompts — framework selection, model calibration, red-team, scorecard. Optional Claude Code session-start gate. | `npx ai-engineering-cookbook prompt-optimizer` |
+| **🔗 [Doc Coherence](./docs/doc-coherence.md)** | Single-source-of-truth registry + deterministic CI gate that fails the build when one doc restates a fact owned by another. | `npx ai-engineering-cookbook doc-coherence` |
 
-> **💡 Global Install Option:** If you prefer to install the tools globally, you can still run `npm install -g github:cloudbloqavi/ai-engineering-cookbook` and then execute the shortcuts `install-prompt-optimizer` or `install-doc-coherence` directly. Each command accepts `--tool`, `--user`, `--dry-run`, and more — see the per-skill guides for flags, tool targets, and uninstall steps.
+### 🛠️ Troubleshooting & Installation Fallbacks
+
+If the direct `npx` command fails or you are working in an environment with restricted network access/unresolved binary shims (common with direct GitHub URLs on Windows), choose one of these fallbacks:
+
+#### Option A: Local DevDependency (Recommended)
+Install the package locally to your target project. This ensures npm correctly configures binary shims on all operating systems:
+```bash
+# From npm registry:
+npm install --save-dev ai-engineering-cookbook
+
+# OR from GitHub directly:
+npm install --save-dev github:cloudbloqavi/ai-engineering-cookbook
+
+# Run the skill installer:
+npx ai-engineering-cookbook doc-coherence
+```
+
+#### Option B: Global Installation
+Install the CLI tool globally on your system:
+```bash
+# From npm registry:
+npm install -g ai-engineering-cookbook
+
+# OR from GitHub directly:
+npm install -g github:cloudbloqavi/ai-engineering-cookbook
+
+# Run the installer commands:
+ai-engineering-cookbook doc-coherence
+ai-engineering-cookbook prompt-optimizer
+```
+*(Alternatively, you can run the direct script shortcuts: `install-doc-coherence` or `install-prompt-optimizer`.)*
+
 
 ---
 

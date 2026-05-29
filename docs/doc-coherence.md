@@ -9,12 +9,37 @@ A portable Agent Skill that kills cross-document drift — the failure mode wher
 Install the skill directly in your target repository using `npx`:
 
 ```bash
-npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence
+npx ai-engineering-cookbook doc-coherence
 ```
 
-> **💡 Note on `npx` execution:** Since this cookbook packages multiple tools, we use `npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence` as a single router entry point. This downloads and runs the installer directly without polluting your global node_modules. Requires **Node.js 18+**.
->
-> *(Alternatively, you can install globally with `npm install -g github:cloudbloqavi/ai-engineering-cookbook` and then run `install-doc-coherence` directly.)*
+> **💡 Note on execution:** Since this cookbook is published to npm, we use `npx ai-engineering-cookbook doc-coherence` as a single router entry point. This downloads and runs the installer directly without polluting your global node_modules. Requires **Node.js 18+**.
+
+### 🛠️ Troubleshooting & Fallbacks (If npx fails)
+If `npx` fails or you are working in an environment with restricted network access/unresolved binary shims (common with direct GitHub URLs on Windows), you can install the package via `npm`:
+
+#### Local Fallback (Recommended)
+```bash
+# From npm registry:
+npm install --save-dev ai-engineering-cookbook
+# OR from GitHub:
+npm install --save-dev github:cloudbloqavi/ai-engineering-cookbook
+
+# Run the installer:
+npx ai-engineering-cookbook doc-coherence
+```
+
+#### Global Fallback
+```bash
+# From npm registry:
+npm install -g ai-engineering-cookbook
+# OR from GitHub:
+npm install -g github:cloudbloqavi/ai-engineering-cookbook
+
+# Run the installer:
+ai-engineering-cookbook doc-coherence
+```
+
+---
 
 Installs `skills/doc-coherence/SKILL.md` into the tool's skills directory (default `./.claude/skills/doc-coherence/`). The same `SKILL.md` works across every Agent-Skills-compatible tool; only the install folder differs. Unlike prompt-optimizer, this skill ships **no session-start hook** — enforcement happens in CI, not on every prompt.
 
@@ -28,34 +53,36 @@ Installs `skills/doc-coherence/SKILL.md` into the tool's skills directory (defau
 
 ### Run the installer per tool
 
+*(If running via global or local installation, replace `npx ai-engineering-cookbook` with `ai-engineering-cookbook` or your preferred path).*
+
 ```bash
 # Claude Code (default)       → .claude/skills/doc-coherence/
-npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence
+npx ai-engineering-cookbook doc-coherence
 
 # Cursor                      → .cursor/skills/doc-coherence/
-npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence --tool cursor
+npx ai-engineering-cookbook doc-coherence --tool cursor
 
 # Roo Code                    → .roo/skills/doc-coherence/
-npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence --tool roo
+npx ai-engineering-cookbook doc-coherence --tool roo
 
 # VS Code Copilot (project)   → .github/skills/doc-coherence/
 # VS Code Copilot (global)    → ~/.copilot/skills/doc-coherence/
 #                                (Windows: %APPDATA%\github-copilot\skills\)
-npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence --tool vscode
-npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence --tool vscode --user
+npx ai-engineering-cookbook doc-coherence --tool vscode
+npx ai-engineering-cookbook doc-coherence --tool vscode --user
 
 # OpenAI Codex (project)      → .codex/skills/doc-coherence/
 # OpenAI Codex (global)       → ~/.codex/skills/doc-coherence/
-npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence --tool codex
-npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence --tool codex --user
+npx ai-engineering-cookbook doc-coherence --tool codex
+npx ai-engineering-cookbook doc-coherence --tool codex --user
 
 # Google Antigravity (project)→ .agents/skills/doc-coherence/
 # Google Antigravity (global) → ~/.gemini/antigravity/skills/doc-coherence/
-npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence --tool antigravity
-npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence --tool antigravity --user
+npx ai-engineering-cookbook doc-coherence --tool antigravity
+npx ai-engineering-cookbook doc-coherence --tool antigravity --user
 
 # Any tool that loads SKILL.md from a custom directory
-npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence \
+npx ai-engineering-cookbook doc-coherence \
     --tool custom --target ./my-skills
 ```
 
