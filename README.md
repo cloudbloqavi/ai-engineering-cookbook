@@ -54,6 +54,7 @@ To make this cookbook easy to navigate, we have broken down the comprehensive gu
 | **🍂 [Brownfield Workflows](./docs/brownfield.md)** | Safe development in legacy or existing codebases. | Express.js JWT Auth example |
 | **🛡️ [AI Governance & Observability](./docs/governance.md)** | The SDLC flywheel, logs, postmortems, and agent roles. | reflections, blameless logs |
 | **🧩 [Community Extensions](./docs/extensions.md)** | 20 curated plugins to enhance security, scope, and testing. | Extension maps, decision guide |
+| **🎯 [Prompt Optimizer Skill](./docs/prompt-optimizer.md)** | Production prompt engineering skill + optional session-start gate. Install with `npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer`. | Framework selection, model calibration, scorecard |
 
 ---
 

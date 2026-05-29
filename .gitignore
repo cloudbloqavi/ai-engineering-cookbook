@@ -86,3 +86,6 @@ temp/
 scratch/
 
 SCRATCHPAD.md
+
+# Claude agent directories
+.claude/
