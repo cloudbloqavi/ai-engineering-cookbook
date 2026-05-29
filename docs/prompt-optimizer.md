@@ -20,6 +20,8 @@ npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer
 
 Installs the skill into `./.claude/skills/prompt-optimizer/`, the hook into `./.claude/hooks/`, and registers the hook in `./.claude/settings.json`. Restart Claude Code (or open a new session) so `settings.json` reloads.
 
+> **Maintainers — single source of truth:** the canonical skill file is [`skills/prompt-optimizer/SKILL.md`](../skills/prompt-optimizer/SKILL.md). The copy under `.claude/skills/prompt-optimizer/SKILL.md` is **generated install output** (git-ignored, produced by [`bin/install-prompt-optimizer.js`](../bin/install-prompt-optimizer.js)). Edit only the `skills/` source, then re-run the installer — never hand-edit the `.claude/` copy, or the shipped and local versions will silently drift.
+
 ### Behavior
 
 | Trigger | What happens |

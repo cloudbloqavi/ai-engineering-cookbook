@@ -1,0 +1,64 @@
+{
+  "_doc": "doc-coherence registry. Declares the single canonical owner of each fact/term so docs can POINT to it instead of restating it (CLAUDE.md §8 'pointers, not copies'). Run `node scripts/check-doc-coherence.js` to enforce. Schema: docs/doc-coherence.md.",
+  "include": ["**/*.md"],
+  "ignore": [
+    "node_modules/**",
+    ".git/**",
+    "dist/**",
+    "build/**",
+    ".next/**",
+    "**/CHANGELOG.md"
+  ],
+  "generated": [
+    ".claude/skills/**",
+    ".cursor/skills/**",
+    ".github/skills/**"
+  ],
+  "authorityOrder": [
+    ".specify/memory/constitution.md",
+    "README.md",
+    "CLAUDE.md",
+    ".ai/config/VERIFICATION_AND_EVAL_GUIDE.md",
+    ".ai/config/AGENT_PROFILE_ROLES.md",
+    "docs/governance.md"
+  ],
+  "tiebreak": "codeowners",
+  "facts": [
+    {
+      "id": "five-principles",
+      "title": "The Five Principles of AI-Native Engineering (philosophy / why)",
+      "owner": "README.md#the-five-principles-of-ai-native-engineering",
+      "rule": "owner-only",
+      "markers": [
+        "Clarify intent before generating",
+        "A smaller, correct implementation is always preferred",
+        "Architectural consistency protects the codebase",
+        "Every coding session must record reflections"
+      ],
+      "allow": [],
+      "note": "The principle NAMES (Intent First, Verify Don't Generate, ...) legitimately appear in CLAUDE.md §5 as the operational 'Five Directives'. These markers are README-exact DEFINITION sentences that must live in one place only. If a definition sentence appears outside README, two docs are defining the philosophy independently — that is the drift to catch."
+    },
+    {
+      "id": "verification-gate-phantom-completion",
+      "title": "Phantom-completion check definition (Gate 2)",
+      "owner": ".ai/config/VERIFICATION_AND_EVAL_GUIDE.md#gate-2-spec-compliance-check",
+      "rule": "owner-only",
+      "markers": [
+        "A task marked `[x]` with no corresponding commit diff is a phantom completion"
+      ],
+      "allow": [],
+      "note": "Gate semantics are owned by VERIFICATION_AND_EVAL_GUIDE.md. governance.md and CLAUDE.md §4 summarise the gates but must not redefine this specific check."
+    },
+    {
+      "id": "canonical-glossary",
+      "title": "Glossary of canonical terms",
+      "owner": "README.md#glossary-canonical-terms",
+      "rule": "owner-only",
+      "markers": [
+        "these are the canonical names. Use them exactly"
+      ],
+      "allow": [],
+      "note": "The glossary is the human-readable twin of this registry. It must exist in exactly one place; other docs link to it."
+    }
+  ]
+}

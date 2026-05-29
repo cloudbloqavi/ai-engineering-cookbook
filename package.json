@@ -4,12 +4,18 @@
   "description": "AI Engineering Cookbook — installable skills and hooks for Claude Code.",
   "private": false,
   "bin": {
-    "install-prompt-optimizer": "./bin/install-prompt-optimizer.js"
+    "install-prompt-optimizer": "./bin/install-prompt-optimizer.js",
+    "install-doc-coherence": "./bin/install-doc-coherence.js"
+  },
+  "scripts": {
+    "lint:docs": "node scripts/check-doc-coherence.js"
   },
   "files": [
     "bin/",
     "skills/",
-    "hooks/"
+    "hooks/",
+    "scripts/",
+    "templates/"
   ],
   "engines": {
     "node": ">=18"
