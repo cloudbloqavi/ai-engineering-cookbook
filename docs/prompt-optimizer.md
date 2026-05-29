@@ -8,14 +8,30 @@ There are **two install profiles**, depending on whether you want the optional s
 
 ---
 
+## 📦 Install
+
+Install the skill directly in your target repository using `npx`:
+
+```bash
+npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer
+```
+
+> **💡 Note on `npx` execution:** Since this cookbook packages multiple tools, we use `npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer` as a single router entry point. This downloads and runs the installer directly without polluting your global node_modules. Requires **Node.js 18+**.
+>
+> *(Alternatively, you can install globally with `npm install -g github:cloudbloqavi/ai-engineering-cookbook` and then run `install-prompt-optimizer` directly.)*
+
+Every command below assumes the `npx` execution method is used, but you can also use `install-prompt-optimizer` directly if you chose the global installation option.
+
+---
+
 ## Profile A — With Claude Code (skill + auto-gate)
 
 You get the slash-invokable skill **plus** an optional session-start gate that automatically offers prompt optimization on the first substantive prompt of every new session. The gate is a `UserPromptSubmit` hook — that mechanism is Claude-Code-specific (hooks are not part of the open standard), which is why it lives in this profile.
 
-### One-line install
+### Run the installer
 
 ```bash
-npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer
+npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer
 ```
 
 Installs the skill into `./.claude/skills/prompt-optimizer/`, the hook into `./.claude/hooks/`, and registers the hook in `./.claude/settings.json`. Restart Claude Code (or open a new session) so `settings.json` reloads.
@@ -35,13 +51,13 @@ Installs the skill into `./.claude/skills/prompt-optimizer/`, the hook into `./.
 
 ```bash
 # Skill only — no auto-gate
-npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer --no-hook
+npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --no-hook
 
 # Global install (~/.claude/) — applies to every project
-npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer --user
+npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --user
 
 # Dry-run — show what would change
-npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer --dry-run
+npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --dry-run
 ```
 
 ### Tune the gate
@@ -62,33 +78,33 @@ Remove the `UserPromptSubmit` entry from `.claude/settings.json`.
 
 The session-start auto-gate is Claude-Code-specific. Everywhere else you **invoke the skill manually** by asking your agent to use it (e.g., *"use the prompt-optimizer skill on this prompt: ..."*). The skill body itself is fully portable — same file, different folder.
 
-### One-line install per tool
+### Run the installer per tool
 
 ```bash
 # Cursor                      → .cursor/skills/prompt-optimizer/
-npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer --tool cursor
+npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --tool cursor
 
 # Roo Code                    → .roo/skills/prompt-optimizer/
-npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer --tool roo
+npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --tool roo
 
 # VS Code Copilot (project)   → .github/skills/prompt-optimizer/
 # VS Code Copilot (global)    → ~/.copilot/skills/prompt-optimizer/
 #                                (Windows: %APPDATA%\github-copilot\skills\)
-npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer --tool vscode
-npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer --tool vscode --user
+npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --tool vscode
+npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --tool vscode --user
 
 # OpenAI Codex (project)      → .codex/skills/prompt-optimizer/
 # OpenAI Codex (global)       → ~/.codex/skills/prompt-optimizer/
-npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer --tool codex
-npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer --tool codex --user
+npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --tool codex
+npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --tool codex --user
 
 # Google Antigravity (project)→ .agent/skills/prompt-optimizer/
 # Google Antigravity (global) → ~/.gemini/antigravity/skills/prompt-optimizer/
-npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer --tool antigravity
-npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer --tool antigravity --user
+npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --tool antigravity
+npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --tool antigravity --user
 
 # Any tool that loads SKILL.md from a custom directory
-npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer \
+npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer \
     --tool custom --target ./my-skills
 ```
 

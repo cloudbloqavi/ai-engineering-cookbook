@@ -53,6 +53,31 @@ graph TD
 
 ---
 
+## 🧰 Installable Skills
+
+This repo ships portable **[Agent Skills](https://agentskills.io/specification)** (`SKILL.md`) you can drop into any compatible agentic tool — Claude Code, Cursor, Roo Code, VS Code Copilot, OpenAI Codex, Google Antigravity. The same skill file works everywhere; only the install folder differs.
+
+**Install any skill directly inside your target repository using `npx` (no global installation required):**
+
+```bash
+# Install Doc Coherence
+npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence
+
+# Install Prompt Optimizer
+npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer
+```
+
+*(You can also run `npx github:cloudbloqavi/ai-engineering-cookbook` without arguments for an interactive selection menu.)*
+
+| Skill | What it does | Run inside your repo |
+| :--- | :--- | :--- |
+| **🎯 [Prompt Optimizer](./docs/prompt-optimizer.md)** | Turns vague requests into production-grade prompts — framework selection, model calibration, red-team, scorecard. Optional Claude Code session-start gate. | `npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer` |
+| **🔗 [Doc Coherence](./docs/doc-coherence.md)** | Single-source-of-truth registry + deterministic CI gate that fails the build when one doc restates a fact owned by another. | `npx github:cloudbloqavi/ai-engineering-cookbook doc-coherence` |
+
+> **💡 Global Install Option:** If you prefer to install the tools globally, you can still run `npm install -g github:cloudbloqavi/ai-engineering-cookbook` and then execute the shortcuts `install-prompt-optimizer` or `install-doc-coherence` directly. Each command accepts `--tool`, `--user`, `--dry-run`, and more — see the per-skill guides for flags, tool targets, and uninstall steps.
+
+---
+
 ## 📚 Cookbook Documentation Directory
 
 | Guide | Description | Key Focus |
@@ -64,9 +89,9 @@ graph TD
 | **🍂 [Brownfield Workflows](./docs/brownfield.md)** | Safe development in legacy or existing codebases. | Express.js JWT Auth example |
 | **🛡️ [AI Governance & Observability](./docs/governance.md)** | The SDLC flywheel, logs, postmortems, and agent roles. | reflections, blameless logs |
 | **🧩 [Community Extensions](./docs/extensions.md)** | 20 curated plugins to enhance security, scope, and testing. | Extension maps, decision guide |
-| **🎯 [Prompt Optimizer Skill](./docs/prompt-optimizer.md)** | Production prompt engineering skill + optional session-start gate. Install with `npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer`. | Framework selection, model calibration, scorecard |
+| **🎯 [Prompt Optimizer Skill](./docs/prompt-optimizer.md)** | Production prompt engineering skill + optional session-start gate. Install via [Installable Skills](#-installable-skills). | Framework selection, model calibration, scorecard |
 | **🧭 [Context Engineering](./docs/context-engineering.md)** | The 6 Context-Engine principles mapped honestly to this repo's mechanisms. | Conflict resolution, token optimization, scope boundaries |
-| **🔗 [Doc Coherence Skill](./docs/doc-coherence.md)** | Single-source-of-truth registry + CI gate that flags cross-doc drift. Install with `npx github:cloudbloqavi/ai-engineering-cookbook install-doc-coherence`. | Canonical owners, authority order, deterministic gate |
+| **🔗 [Doc Coherence Skill](./docs/doc-coherence.md)** | Single-source-of-truth registry + CI gate that flags cross-doc drift. Install via [Installable Skills](#-installable-skills). | Canonical owners, authority order, deterministic gate |
 | **🔧 [Troubleshooting](./docs/troubleshooting.md)** | Common failure scenarios and step-by-step fixes. | Install errors, TDD issues, phantom completions |
 | **📖 [Glossary](./GLOSSARY.md)** | Plain-English definitions for every key term. | 30+ terms from AI Agent to Worktree |
 | **🤝 [Contributing](./CONTRIBUTING.md)** | How to improve the cookbook and add new content. | PR checklist, style guide, extension submissions |

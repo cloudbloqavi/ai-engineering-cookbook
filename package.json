@@ -4,6 +4,7 @@
   "description": "AI Engineering Cookbook — installable skills and hooks for Claude Code.",
   "private": false,
   "bin": {
+    "ai-engineering-cookbook": "./bin/cli.js",
     "install-prompt-optimizer": "./bin/install-prompt-optimizer.js",
     "install-doc-coherence": "./bin/install-doc-coherence.js"
   },
