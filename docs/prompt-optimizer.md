@@ -98,7 +98,7 @@ npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --tool vscode -
 npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --tool codex
 npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --tool codex --user
 
-# Google Antigravity (project)→ .agent/skills/prompt-optimizer/
+# Google Antigravity (project)→ .agents/skills/prompt-optimizer/
 # Google Antigravity (global) → ~/.gemini/antigravity/skills/prompt-optimizer/
 npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --tool antigravity
 npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --tool antigravity --user
@@ -125,7 +125,7 @@ Most modern agents auto-discover skills via the `name` + `description` in the SK
 | **Roo Code** | `.roo/skills/` | — (project only) | ❌ No | No equivalent prompt-submit hook |
 | **VS Code Copilot** | `.github/skills/` | `~/.copilot/skills/` (Windows: `%APPDATA%\github-copilot\skills\`) | ❌ No | No equivalent prompt-submit hook today |
 | **OpenAI Codex** | `.codex/skills/` | `~/.codex/skills/` | ❌ Not yet | `UserPromptSubmit`, `SessionStart`, etc. ([Codex Hooks docs](https://developers.openai.com/codex/hooks)) — port feasible |
-| **Google Antigravity** | `.agent/skills/` | `~/.gemini/antigravity/skills/` | ❌ No | Skill lifecycle hooks exist but no prompt-submit equivalent confirmed |
+| **Google Antigravity** | `.agents/skills/` | `~/.gemini/antigravity/skills/` | ❌ No | Skill lifecycle hooks exist but no prompt-submit equivalent confirmed |
 | **Custom** | `<--target>/` | — | ❌ No | N/A |
 
 Sources: [Agent Skills spec](https://agentskills.io/specification) · [Claude Code](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview) · [Cursor Skills](https://cursor.com/docs/skills) · [Cursor Hooks](https://cursor.com/docs/hooks) · [Roo Code](https://docs.roocode.com/features/skills) · [VS Code](https://code.visualstudio.com/docs/copilot/customization/agent-skills) · [Codex Skills](https://developers.openai.com/codex/skills) · [Codex Hooks](https://developers.openai.com/codex/hooks) · [Antigravity](https://antigravity.google/docs/skills).

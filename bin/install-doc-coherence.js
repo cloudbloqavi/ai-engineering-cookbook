@@ -117,7 +117,7 @@ const TOOL_PROFILES = {
   },
   antigravity: {
     label: "Google Antigravity",
-    skillsDirProject: ".agent/skills",
+    skillsDirProject: ".agents/skills",
     skillsDirUser: path.join(os.homedir(), ".gemini", "antigravity", "skills"),
     supportsUser: true,
   },
