@@ -13,14 +13,35 @@ There are **two install profiles**, depending on whether you want the optional s
 Install the skill directly in your target repository using `npx`:
 
 ```bash
-npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer
+npx ai-engineering-cookbook prompt-optimizer
 ```
 
-> **💡 Note on `npx` execution:** Since this cookbook packages multiple tools, we use `npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer` as a single router entry point. This downloads and runs the installer directly without polluting your global node_modules. Requires **Node.js 18+**.
->
-> *(Alternatively, you can install globally with `npm install -g github:cloudbloqavi/ai-engineering-cookbook` and then run `install-prompt-optimizer` directly.)*
+> **💡 Note on execution:** Since this cookbook is published to npm, we use `npx ai-engineering-cookbook prompt-optimizer` as a single router entry point. This downloads and runs the installer directly without polluting your global node_modules. Requires **Node.js 18+**.
 
-Every command below assumes the `npx` execution method is used, but you can also use `install-prompt-optimizer` directly if you chose the global installation option.
+### 🛠️ Troubleshooting & Fallbacks (If npx fails)
+If `npx` fails or you are working in an environment with restricted network access/unresolved binary shims (common with direct GitHub URLs on Windows), you can install the package via `npm`:
+
+#### Local Fallback (Recommended)
+```bash
+# From npm registry:
+npm install --save-dev ai-engineering-cookbook
+# OR from GitHub:
+npm install --save-dev github:cloudbloqavi/ai-engineering-cookbook
+
+# Run the installer:
+npx ai-engineering-cookbook prompt-optimizer
+```
+
+#### Global Fallback
+```bash
+# From npm registry:
+npm install -g ai-engineering-cookbook
+# OR from GitHub:
+npm install -g github:cloudbloqavi/ai-engineering-cookbook
+
+# Run the installer:
+ai-engineering-cookbook prompt-optimizer
+```
 
 ---
 
@@ -31,7 +52,7 @@ You get the slash-invokable skill **plus** an optional session-start gate that a
 ### Run the installer
 
 ```bash
-npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer
+npx ai-engineering-cookbook prompt-optimizer
 ```
 
 Installs the skill into `./.claude/skills/prompt-optimizer/`, the hook into `./.claude/hooks/`, and registers the hook in `./.claude/settings.json`. Restart Claude Code (or open a new session) so `settings.json` reloads.
@@ -51,13 +72,13 @@ Installs the skill into `./.claude/skills/prompt-optimizer/`, the hook into `./.
 
 ```bash
 # Skill only — no auto-gate
-npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --no-hook
+npx ai-engineering-cookbook prompt-optimizer --no-hook
 
 # Global install (~/.claude/) — applies to every project
-npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --user
+npx ai-engineering-cookbook prompt-optimizer --user
 
 # Dry-run — show what would change
-npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --dry-run
+npx ai-engineering-cookbook prompt-optimizer --dry-run
 ```
 
 ### Tune the gate
@@ -80,31 +101,33 @@ The session-start auto-gate is Claude-Code-specific. Everywhere else you **invok
 
 ### Run the installer per tool
 
+*(If running via global or local installation, replace `npx ai-engineering-cookbook` with `ai-engineering-cookbook` or your preferred path).*
+
 ```bash
 # Cursor                      → .cursor/skills/prompt-optimizer/
-npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --tool cursor
+npx ai-engineering-cookbook prompt-optimizer --tool cursor
 
 # Roo Code                    → .roo/skills/prompt-optimizer/
-npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --tool roo
+npx ai-engineering-cookbook prompt-optimizer --tool roo
 
 # VS Code Copilot (project)   → .github/skills/prompt-optimizer/
 # VS Code Copilot (global)    → ~/.copilot/skills/prompt-optimizer/
 #                                (Windows: %APPDATA%\github-copilot\skills\)
-npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --tool vscode
-npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --tool vscode --user
+npx ai-engineering-cookbook prompt-optimizer --tool vscode
+npx ai-engineering-cookbook prompt-optimizer --tool vscode --user
 
 # OpenAI Codex (project)      → .codex/skills/prompt-optimizer/
 # OpenAI Codex (global)       → ~/.codex/skills/prompt-optimizer/
-npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --tool codex
-npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --tool codex --user
+npx ai-engineering-cookbook prompt-optimizer --tool codex
+npx ai-engineering-cookbook prompt-optimizer --tool codex --user
 
 # Google Antigravity (project)→ .agents/skills/prompt-optimizer/
 # Google Antigravity (global) → ~/.gemini/antigravity/skills/prompt-optimizer/
-npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --tool antigravity
-npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer --tool antigravity --user
+npx ai-engineering-cookbook prompt-optimizer --tool antigravity
+npx ai-engineering-cookbook prompt-optimizer --tool antigravity --user
 
 # Any tool that loads SKILL.md from a custom directory
-npx github:cloudbloqavi/ai-engineering-cookbook prompt-optimizer \
+npx ai-engineering-cookbook prompt-optimizer \
     --tool custom --target ./my-skills
 ```
 
