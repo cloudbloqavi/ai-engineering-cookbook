@@ -33,6 +33,12 @@ uv --version
 # Expected: uv x.y.z
 ```
 
+> [!NOTE]
+> **Windows users:** After installing `uv`, close and reopen your terminal before running `uv --version`. To reload the PATH without restarting, run:
+> ```powershell
+> $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("PATH","User")
+> ```
+
 ---
 
 ### 2. Install Spec-Kit
@@ -65,6 +71,16 @@ graph TD
     D --> H["gemini extensions install https://github.com/obra/superpowers"]
     E --> I["Use /plugins -> Search 'superpowers' -> Click Install"]
 ```
+
+> [!IMPORTANT]
+> **Command accuracy:** Plugin install commands change as agents evolve. If the command above fails for your agent, check the [official Superpowers repository](https://github.com/obra/superpowers) for the latest install instructions for your specific agent version.
+
+#### Verifying Superpowers Installation
+After installing, type the following in your agent's chat interface to confirm it's active:
+```
+/sp-status
+```
+If Superpowers is installed correctly, you will see a list of available skills including `using-git-worktrees`, `test-driven-development`, and `requesting-code-review`.
 
 ---
 
@@ -117,3 +133,4 @@ If these files are present, you are successfully set up and ready to create your
 - Walk through a greenfield project from scratch: [Greenfield Guide](./greenfield.md)
 - Walk through a brownfield project setup: [Brownfield Guide](./brownfield.md)
 - Explore the AI Observability and Governance Layer: [AI Governance Guide](./governance.md)
+- Ran into install problems? See the [Troubleshooting Guide](./troubleshooting.md)

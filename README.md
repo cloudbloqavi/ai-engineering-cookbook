@@ -6,6 +6,18 @@ This cookbook provides an opinionated engineering workflow that combines **[Spec
 
 ---
 
+## 🤔 New Here? What Is AI-Native Engineering?
+
+AI-Native Engineering is a development approach where **AI agents write the majority of the code** — but humans stay firmly in control by defining clear intent upfront and verifying outcomes rigorously.
+
+Think of it this way: instead of writing code yourself, you write a precise *specification* of what the code should do. An AI agent then implements it, test by test, under strict constraints you set. Your role shifts from **code author** to **intent definer and outcomes verifier**.
+
+This cookbook gives you the workflow, tools, and guardrails to do that safely and repeatably.
+
+> **New to this?** Follow the [Learning Path](#%EF%B8%8F-learning-path-start-here) below before diving into the guides. Don't know a term? Check the [Glossary](./GLOSSARY.md).
+
+---
+
 ## 🎨 Interactive Cookbook Explorer
 
 The AI Engineering Cookbook is accompanied by a modern, interactive web application that provides a comprehensive visual walkthrough of the entire agentic SDLC workflow, agent profiles, verification gates, and community extensions.
@@ -43,8 +55,6 @@ graph TD
 
 ## 📚 Cookbook Documentation Directory
 
-To make this cookbook easy to navigate, we have broken down the comprehensive guide into modular, topic-focused guides:
-
 | Guide | Description | Key Focus |
 | :--- | :--- | :--- |
 | **🎨 [Cookbook Explorer](https://cloudbloqavi.github.io/ai-engineering-cookbook/design/cookbook-explorer.html) ([Local](./design/README.md))** | Interactive visual companion to explore the cookbook. | Interactive SDLC, agents, verification gates, and extensions |
@@ -55,6 +65,27 @@ To make this cookbook easy to navigate, we have broken down the comprehensive gu
 | **🛡️ [AI Governance & Observability](./docs/governance.md)** | The SDLC flywheel, logs, postmortems, and agent roles. | reflections, blameless logs |
 | **🧩 [Community Extensions](./docs/extensions.md)** | 20 curated plugins to enhance security, scope, and testing. | Extension maps, decision guide |
 | **🎯 [Prompt Optimizer Skill](./docs/prompt-optimizer.md)** | Production prompt engineering skill + optional session-start gate. Install with `npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer`. | Framework selection, model calibration, scorecard |
+| **🔧 [Troubleshooting](./docs/troubleshooting.md)** | Common failure scenarios and step-by-step fixes. | Install errors, TDD issues, phantom completions |
+| **📖 [Glossary](./GLOSSARY.md)** | Plain-English definitions for every key term. | 30+ terms from AI Agent to Worktree |
+| **🤝 [Contributing](./CONTRIBUTING.md)** | How to improve the cookbook and add new content. | PR checklist, style guide, extension submissions |
+
+---
+
+## 🛤️ Learning Path (Start Here)
+
+Not sure where to begin? Follow this sequence:
+
+| Step | You Are... | Go To |
+| :---: | :--- | :--- |
+| 1 | **Brand new** — never used AI agents for coding | [Quickstart Guide](./QUICKSTART.md) |
+| 2 | **Setting up** your local machine | [Installation & Setup](./docs/installation.md) |
+| 3 | **Starting a new project** from scratch | [Greenfield Workflow](./docs/greenfield.md) |
+| 4 | **Adding AI to an existing project** | [Brownfield Workflow](./docs/brownfield.md) |
+| 5 | **Curious about governance** and quality gates | [AI Governance & Observability](./docs/governance.md) |
+| 6 | **Want more tools** and plugins | [Community Extensions](./docs/extensions.md) |
+| 7 | **Want a sharper prompt** before starting work | [Prompt Optimizer Skill](./docs/prompt-optimizer.md) |
+| 8 | **Stuck on something** | [Troubleshooting Guide](./docs/troubleshooting.md) |
+| 9 | **Want to contribute** | [Contributing Guide](./CONTRIBUTING.md) |
 
 ---
 
@@ -74,4 +105,4 @@ We enforce five core principles to manage this shift safely:
 
 ### 🤝 Contributing
 
-We welcome contributions from the community! Please read our [Quickstart](./QUICKSTART.md) to understand the workflow before submitting a PR. Ensure all PRs are implemented using the Spec-Kit/Superpowers TDD loop.
+We welcome contributions! Read our [Contributing Guide](./CONTRIBUTING.md) before submitting a PR — it covers branch naming, style guide, how to add new extensions, and the PR checklist.
