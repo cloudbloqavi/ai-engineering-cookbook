@@ -315,19 +315,18 @@ DIRECTIVE 5 — BLAMELESS LEARNING (when errors or failures occur)
 ---
 
 ## 7. Project stack
-<!-- Fill once. Agent will ask if left blank. -->
 
 | Key | Value |
 |---|---|
-| Runtime | <!-- Node 20 / Python 3.12 / Go 1.22 --> |
-| Framework | <!-- Next.js 14 / FastAPI / Gin --> |
-| Database | <!-- PostgreSQL via Prisma / SQLAlchemy --> |
-| Test runner | <!-- vitest / pytest / go test --> |
-| CI command | <!-- pnpm test && pnpm lint --> |
-| Coverage floor | <!-- 80% --> |
-| Protected paths | <!-- src/auth/  src/billing/ --> |
-| New dep policy | <!-- PR approval / team Slack #eng-deps --> |
-| Branch pattern | <!-- <NNN>-<kebab-slug> (Spec-Kit auto) --> |
+| Runtime | N/A — static documentation site (Markdown + pre-bundled HTML) |
+| Framework | N/A — pure Markdown; interactive explorer is pre-built React HTML |
+| Database | N/A |
+| Test runner | `markdownlint` (lint) · `markdown-link-check` (broken links) · `cspell` (spell check) |
+| CI command | `markdownlint "**/*.md" --ignore node_modules` |
+| Coverage floor | N/A |
+| Protected paths | `design/cookbook-explorer.html` (pre-built bundle — do not regenerate manually) |
+| New dep policy | Open a PR describing the dependency and its purpose; maintainer approval required |
+| Branch pattern | `<type>/<kebab-slug>` (e.g. `improvements/cookbook-review`, `docs/add-faq`, `fix/broken-links`) |
 
 If this table is empty when a task begins → ask the user to fill it before proceeding.
 
