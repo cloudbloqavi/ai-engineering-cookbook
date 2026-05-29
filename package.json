@@ -1,0 +1,22 @@
+{
+  "name": "ai-engineering-cookbook",
+  "version": "0.1.0",
+  "description": "AI Engineering Cookbook — installable skills and hooks for Claude Code.",
+  "private": false,
+  "bin": {
+    "install-prompt-optimizer": "./bin/install-prompt-optimizer.js"
+  },
+  "files": [
+    "bin/",
+    "skills/",
+    "hooks/"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cloudbloqavi/ai-engineering-cookbook.git"
+  },
+  "license": "MIT"
+}

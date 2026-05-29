@@ -64,6 +64,7 @@ graph TD
 | **🍂 [Brownfield Workflows](./docs/brownfield.md)** | Safe development in legacy or existing codebases. | Express.js JWT Auth example |
 | **🛡️ [AI Governance & Observability](./docs/governance.md)** | The SDLC flywheel, logs, postmortems, and agent roles. | reflections, blameless logs |
 | **🧩 [Community Extensions](./docs/extensions.md)** | 20 curated plugins to enhance security, scope, and testing. | Extension maps, decision guide |
+| **🎯 [Prompt Optimizer Skill](./docs/prompt-optimizer.md)** | Production prompt engineering skill + optional session-start gate. Install with `npx github:cloudbloqavi/ai-engineering-cookbook install-prompt-optimizer`. | Framework selection, model calibration, scorecard |
 | **🔧 [Troubleshooting](./docs/troubleshooting.md)** | Common failure scenarios and step-by-step fixes. | Install errors, TDD issues, phantom completions |
 | **📖 [Glossary](./GLOSSARY.md)** | Plain-English definitions for every key term. | 30+ terms from AI Agent to Worktree |
 | **🤝 [Contributing](./CONTRIBUTING.md)** | How to improve the cookbook and add new content. | PR checklist, style guide, extension submissions |
@@ -82,8 +83,9 @@ Not sure where to begin? Follow this sequence:
 | 4 | **Adding AI to an existing project** | [Brownfield Workflow](./docs/brownfield.md) |
 | 5 | **Curious about governance** and quality gates | [AI Governance & Observability](./docs/governance.md) |
 | 6 | **Want more tools** and plugins | [Community Extensions](./docs/extensions.md) |
-| 7 | **Stuck on something** | [Troubleshooting Guide](./docs/troubleshooting.md) |
-| 8 | **Want to contribute** | [Contributing Guide](./CONTRIBUTING.md) |
+| 7 | **Want a sharper prompt** before starting work | [Prompt Optimizer Skill](./docs/prompt-optimizer.md) |
+| 8 | **Stuck on something** | [Troubleshooting Guide](./docs/troubleshooting.md) |
+| 9 | **Want to contribute** | [Contributing Guide](./CONTRIBUTING.md) |
 
 ---
 
