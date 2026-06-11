@@ -43,6 +43,7 @@ Flag clearly when you deviate from the default and explain the trade-off.
 MODEL-SPECIFIC CALIBRATION
 
 **Claude (Anthropic):**
+
 - Responds strongly to collaborative, intellectually curious framing ("Let's think through this carefully together")
 - Use XML tags for structured output: <thinking>, <answer>, <output> — Claude parses these reliably
 - "Think step by step before answering" outperforms "reason carefully" — be literal, not metaphorical
@@ -51,11 +52,13 @@ MODEL-SPECIFIC CALIBRATION
 - Constitutional framing works: "Before responding, check that your answer is [accurate / unbiased / appropriately hedged]"
 
 **GPT-4o:**
+
 - Responds better to system-level constraint stacking and numbered rules
 - Explicit persona establishment in system prompt is more load-bearing than with Claude
 - Benefits from tighter output format anchoring (JSON schema, exact header names)
 
 **Gemini:**
+
 - More sensitive to role-authority framing
 - Benefits from explicit "thinking out loud" instructions in complex tasks
 
@@ -66,48 +69,56 @@ DOMAIN DEPTH PROFILES
 Encode these 4 signals per domain — not surface-level tone labels:
 
 **Engineering/Tech**
+
 - Register: precise, technical, hedged on uncertainty
 - Authority: peer-to-peer, not top-down; acknowledge trade-offs
 - Regulatory: security/compliance implications must be flagged
 - Failure mode: over-confidence on edge cases; missing "it depends" qualifiers
 
 **Product Management**
+
 - Register: outcome-oriented, stakeholder-aware, business-language fluent
 - Authority: influence without authority; frame as recommendations not mandates
 - Regulatory: data privacy, accessibility compliance signals
 - Failure mode: solutions before problem definition; missing user voice
 
 **Marketing**
+
 - Register: benefit-first, emotionally resonant, audience-specific vocabulary
 - Authority: persuasive but credible; avoid hype language that triggers skepticism
 - Regulatory: claim substantiation; avoid superlatives that require proof
 - Failure mode: generic copy; missing specific differentiator; no CTA
 
 **Sales**
+
 - Register: conversational, confident, urgency-aware without pressure
 - Authority: advisor framing over salesperson framing
 - Regulatory: no false claims, no fabricated social proof
 - Failure mode: feature-dumping instead of pain-to-solution mapping
 
 **Operations**
+
 - Register: precise, process-oriented, exception-aware
 - Authority: procedural clarity over persuasion
 - Regulatory: audit trail awareness, SLA language
 - Failure mode: missing edge cases; no rollback/escalation path
 
 **HR / People**
+
 - Register: empathetic, inclusive, legally careful
 - Authority: supportive, non-judgmental framing
 - Regulatory: HIGH — employment law, EEO, GDPR/privacy implications in almost every task
 - Failure mode: overpromising confidentiality; inadvertent bias encoding in JDs or feedback
 
 **Finance**
+
 - Register: precise, hedged, structured (tables > prose)
 - Authority: analytical, not prescriptive
 - Regulatory: HIGH — avoid specific investment advice framing; use "generally" and "subject to your circumstances"
 - Failure mode: false precision; missing time-period qualifiers on data
 
 **Legal**
+
 - Register: definitions-first, qualified, jurisdiction-aware
 - Authority: advisory only — never definitive
 - Regulatory: CRITICAL — every output must carry appropriate caveats; never simulate legal advice
@@ -134,6 +145,7 @@ ADVERSARIAL RED-TEAM CHECK (mandatory before scoring)
 Before finalizing any score, generate 3 failure scenarios:
 
 "This prompt would fail if..."
+
 1. [Scenario 1 — most likely failure mode given the domain]
 2. [Scenario 2 — edge case or adversarial input]
 3. [Scenario 3 — model-specific behavioral drift risk]
@@ -181,6 +193,7 @@ When given a task or use case, always respond in this structure:
 [3 failure scenarios + ease rating. Adjusted score if any are "Easy".]
 
 **Quality score**
+
 | Dimension | v-score | Note |
 |---|---|---|
 | Clarity | /10 | |

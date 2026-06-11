@@ -103,6 +103,7 @@ See [AI Governance Guide](./docs/governance.md)
 ## Gate 1 / Gate 2 / Gate 3 / Gate 4
 
 The four sequential verification gates that code must pass before merging:
+
 - **Gate 1** — Automated checks: linting, type checking, tests, secret scanning.
 - **Gate 2** — Spec compliance: every acceptance criterion has a passing test.
 - **Gate 3** — Human review triggers: protected path changed, new dependency, coverage dropped.

@@ -1,6 +1,6 @@
 # AI Engineering Cookbook
 
-Practical patterns, structures, and guidelines for building software autonomously with AI agents. 
+Practical patterns, structures, and guidelines for building software autonomously with AI agents.
 
 This cookbook provides an opinionated engineering workflow that combines **[Spec-Kit](https://github.com/github/spec-kit)** for planning ("what to build") and **[Superpowers](https://github.com/obra/superpowers)** for execution ("how to build it"), augmented with curated community extensions and an AI governance layer.
 
@@ -14,7 +14,7 @@ Think of it this way: instead of writing code yourself, you write a precise *spe
 
 This cookbook gives you the workflow, tools, and guardrails to do that safely and repeatably.
 
-> **New to this?** Follow the [Learning Path](#%EF%B8%8F-learning-path-start-here) below before diving into the guides. Don't know a term? Check the [Glossary](./GLOSSARY.md).
+> **New to this?** Follow the [Learning Path](#learning-path-start-here) below before diving into the guides. Don't know a term? Check the [Glossary](./GLOSSARY.md).
 
 ---
 
@@ -101,7 +101,9 @@ npx ai-engineering-cookbook prompt-optimizer --tool others   # → .coding/, ren
 If the direct `npx` command fails or you are working in an environment with restricted network access/unresolved binary shims (common with direct GitHub URLs on Windows), choose one of these fallbacks:
 
 #### Option A: Local DevDependency (Recommended)
+
 Install the package locally to your target project. This ensures npm correctly configures binary shims on all operating systems:
+
 ```bash
 # From npm registry:
 npm install --save-dev ai-engineering-cookbook
@@ -114,7 +116,9 @@ npx ai-engineering-cookbook doc-coherence
 ```
 
 #### Option B: Global Installation
+
 Install the CLI tool globally on your system:
+
 ```bash
 # From npm registry:
 npm install -g ai-engineering-cookbook
@@ -126,8 +130,8 @@ npm install -g github:cloudbloqavi/ai-engineering-cookbook
 ai-engineering-cookbook doc-coherence
 ai-engineering-cookbook prompt-optimizer
 ```
-*(Alternatively, you can run the direct script shortcuts: `install-doc-coherence` or `install-prompt-optimizer`.)*
 
+*(Alternatively, you can run the direct script shortcuts: `install-doc-coherence` or `install-prompt-optimizer`.)*
 
 ---
 
@@ -151,7 +155,7 @@ ai-engineering-cookbook prompt-optimizer
 
 ---
 
-## 🛤️ Learning Path (Start Here)
+## Learning Path (Start Here)
 
 Not sure where to begin? Follow this sequence:
 

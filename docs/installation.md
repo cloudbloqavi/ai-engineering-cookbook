@@ -17,6 +17,7 @@ Before installing the tools, make sure you have the following installed on your 
 ## 📦 Step-by-step Installation
 
 ### 1. Install `uv` (Fast Python Package Manager)
+
 Spec-Kit is distributed as a Python package. We recommend using `uv` to manage Python CLI tools because it is significantly faster and more isolated than standard `pip`.
 
 ```bash
@@ -28,6 +29,7 @@ powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
 Verify that `uv` is installed:
+
 ```bash
 uv --version
 # Expected: uv x.y.z
@@ -35,6 +37,7 @@ uv --version
 
 > [!NOTE]
 > **Windows users:** After installing `uv`, close and reopen your terminal before running `uv --version`. To reload the PATH without restarting, run:
+>
 > ```powershell
 > $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("PATH","User")
 > ```
@@ -42,6 +45,7 @@ uv --version
 ---
 
 ### 2. Install Spec-Kit
+
 Use `uv` to install the Spec-Kit CLI tool globally. This ensures that the CLI and its dependencies are placed in an isolated, dedicated environment.
 
 ```bash
@@ -49,6 +53,7 @@ uv tool install specify-cli --from git+https://github.com/github/spec-kit.git
 ```
 
 Verify that Spec-Kit is installed:
+
 ```bash
 specify --version
 # Expected: specify-cli x.y.z
@@ -57,6 +62,7 @@ specify --version
 ---
 
 ### 3. Install Superpowers
+
 Superpowers is installed directly inside your AI coding agent (e.g. Claude Code, Cursor, Gemini CLI).
 
 ```mermaid
@@ -76,10 +82,13 @@ graph TD
 > **Command accuracy:** Plugin install commands change as agents evolve. If the command above fails for your agent, check the [official Superpowers repository](https://github.com/obra/superpowers) for the latest install instructions for your specific agent version.
 
 #### Verifying Superpowers Installation
+
 After installing, type the following in your agent's chat interface to confirm it's active:
+
 ```
 /sp-status
 ```
+
 If Superpowers is installed correctly, you will see a list of available skills including `using-git-worktrees`, `test-driven-development`, and `requesting-code-review`.
 
 ---
@@ -89,6 +98,7 @@ If Superpowers is installed correctly, you will see a list of available skills i
 Once the tools are installed globally, you must initialize Spec-Kit in your project root directory.
 
 ### Scenario A: Greenfield Project (From Scratch)
+
 If you are starting a completely new project in a blank directory, run:
 
 ```bash
@@ -96,16 +106,19 @@ mkdir my-new-project
 cd my-new-project
 specify init . --integration claude
 ```
+
 > [!NOTE]
 > Change `--integration claude` to matches your target agent (e.g. `gemini`, `copilot`, `cursor`).
 
 ### Scenario B: Brownfield Project (Existing Codebase)
+
 If you are adding AI-assisted workflows to an existing project, navigate to the project directory and run:
 
 ```bash
 cd my-existing-project
 specify init . --force --integration claude
 ```
+
 > [!IMPORTANT]
 > The `--force` flag is safe to use. It only creates the `.specify/` directory structure and does not modify or delete any of your existing source files.
 
@@ -130,6 +143,7 @@ If these files are present, you are successfully set up and ready to create your
 ---
 
 ### 📖 Next Steps
+
 - Walk through a greenfield project from scratch: [Greenfield Guide](./greenfield.md)
 - Walk through a brownfield project setup: [Brownfield Guide](./brownfield.md)
 - Explore the AI Observability and Governance Layer: [AI Governance Guide](./governance.md)

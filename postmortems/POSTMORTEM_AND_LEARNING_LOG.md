@@ -5,12 +5,14 @@
 > need to be sharper. Agents and humans are collaborators in a learning system.
 >
 > **Rules:**
+>
 > - NEVER use this log to criticize an agent or a team member by name.
 > - ALWAYS identify a systemic fix — a change to a spec, skill file, or gate.
 > - APPEND only. Do not delete or alter previous entries.
 > - Reference the `.ai/traces/AGENT_LOG_REFLECTIONS.md` entry that triggered this postmortem.
 >
 > **When to create an entry:**
+>
 > - Any agent-generated bug that reaches staging or production
 > - Any spec compliance failure caught at the review stage
 > - Any TDD cycle where tests could not be made to pass within a single session
@@ -51,6 +53,7 @@ Copy this template for each new entry. Do not modify the structure.
 **Fix applied**: Added a 30-second grace period for token overlap. Updated the auth integration test suite to include a concurrent-request scenario. Re-ran full test suite; all pass.
 
 **Guardrail created/updated**: Two files updated:
+
 - `VERIFICATION_AND_EVAL_GUIDE.md` Gate 2: added "For auth-related tasks, include a concurrent-request test scenario before marking COMPLETE. (See postmortem: 2026-05-23-auth-token-rotation-spec-ambiguity)"
 - `.specify/memory/constitution.md` security section: added definition of "token rotation" and "long-lived token" (> 24h = long-lived; rotation = issue new + allow 30s grace period for in-flight requests)
 

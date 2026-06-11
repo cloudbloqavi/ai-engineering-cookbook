@@ -37,7 +37,9 @@ It greps each marker across all in-scope docs; a marker found outside its owner 
 Pick the mode from what the user asks. State which mode you're in.
 
 ### 1. `audit` — bootstrap or refresh the registry
+
 When there is no registry yet, or it's stale.
+
 1. Read the corpus (README, docs/, governance/spec/config markdown). Identify facts/terms that are *defined* (not just mentioned): principles, gate definitions, glossaries, role definitions, canonical commands.
 2. For each, find where it's defined and whether it's defined in more than one place.
 3. Propose a `coherence.config.json`: assign each fact an `owner` (use `authorityOrder` to choose when several files define it), pick `markers` that are **unique to the owner** (prefer full definition sentences over short names that legitimately recur), and write a `note` explaining the choice.
@@ -45,12 +47,15 @@ When there is no registry yet, or it's stale.
 5. Present the proposed registry to the user for approval — do not silently overwrite an existing one.
 
 ### 2. `detect` — report current drift
+
 1. Run `node scripts/check-doc-coherence.js`. Report violations as `file:line`, ranked by the owner's position in `authorityOrder` (highest-authority conflicts first).
 2. (Optional) Paraphrase pass: for the highest-value facts, scan whether other docs *describe the same thing in different words*. Report these as advisory findings, clearly separated from the deterministic gate result. Do not fail anything on a paraphrase hunch.
 3. Summarize: N hard violations, M advisory paraphrase concerns.
 
 ### 3. `resolve` — fix the drift
+
 For each violation:
+
 1. Decide the canonical owner. If it's already declared, keep it. If contested, choose via `authorityOrder`; if that ties, apply `tiebreak` (read `.github/CODEOWNERS`, or `git log`/`git blame` for who last authored the competing sections).
 2. In the **non-owner** file, replace the restated content with a short pointer/link to the owner (e.g. `See [Owner Doc](path#anchor).`). Preserve any genuinely new information — move it into the owner if it belongs there.
 3. If the duplication is *intentional and justified* (e.g. a layered philosophy-vs-operational split), add the file to that fact's `allow` list with a `note` instead of deleting — don't fight a deliberate design.
@@ -58,6 +63,7 @@ For each violation:
 5. Never edit a `generated` file to fix drift — fix its source.
 
 ### 4. `enforce` — make drift impossible to reintroduce
+
 1. Ensure `scripts/check-doc-coherence.js` and `coherence.config.json` exist in the repo.
 2. Add/refresh a CI job that runs the gate on markdown changes (`.github/workflows/doc-coherence.yml`) and fails the PR on exit 1.
 3. Optionally add an `npm run lint:docs` script and a pre-commit hook.

@@ -15,6 +15,7 @@ For bugs not covered here, [open a GitHub issue](https://github.com/cloudbloqavi
 **Cause:** `uv tool install` places binaries in a directory that isn't on your system PATH yet.
 
 **Fix:**
+
 ```bash
 # Check where uv puts tool binaries
 uv tool dir
@@ -26,6 +27,7 @@ export PATH="$(uv tool dir):$PATH"
 ```
 
 On Windows (PowerShell):
+
 ```powershell
 $env:PATH = "$(uv tool dir);" + $env:PATH
 ```
@@ -41,6 +43,7 @@ $env:PATH = "$(uv tool dir);" + $env:PATH
 **Cause:** The install script updated your PATH in the shell profile, but the current terminal session hasn't reloaded it.
 
 **Fix:**
+
 ```bash
 # macOS / Linux — reload the profile
 source ~/.bashrc   # or source ~/.zshrc
@@ -58,6 +61,7 @@ $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH","Machine") + ";"
 **Cause:** PowerShell is not running as Administrator, or the project folder is in a protected location (e.g. `C:\Program Files\`).
 
 **Fix:**
+
 1. Move your project folder to a non-protected location (e.g. `C:\Users\<you>\projects\`).
 2. Or run PowerShell as Administrator for the init step only.
 
@@ -70,6 +74,7 @@ $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH","Machine") + ";"
 **Cause:** Plugin install command may have failed silently, or the agent needs a restart.
 
 **Fix:**
+
 1. Restart the agent completely (close and reopen Claude Code / Cursor).
 2. Re-run the install command for your agent (see [Installation Guide](./installation.md)).
 3. Verify by typing `/sp-status` in the chat — you should see a list of active skills.
@@ -88,10 +93,12 @@ $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH","Machine") + ";"
 **Cause:** The handoff message was missing the constraint `Do not create a new git branch`. The agent defaulted to its own branching behavior.
 
 **Fix:** Checkout the correct branch manually and delete the duplicate:
+
 ```bash
 git checkout 001-my-feature
 git branch -D feat/my-feature-2
 ```
+
 Then re-paste the handoff message with all constraints included.
 
 **Prevention:** Always include `Do not create a new git branch (already created by Spec-Kit)` in your handoff message.
@@ -105,6 +112,7 @@ Then re-paste the handoff message with all constraints included.
 **Cause:** The spec description in `/speckit.specify` was too vague or included implementation details (how) instead of user requirements (what).
 
 **Fix:** Re-run `/speckit.specify` with a clearer, user-facing description:
+
 - ❌ `Build a JWT auth system using bcryptjs and Express middleware`
 - ✅ `Allow users to log in with email and password. Return an error if credentials are wrong. Keep them logged in across page refreshes.`
 
@@ -117,9 +125,11 @@ Then re-paste the handoff message with all constraints included.
 **Cause:** The agent wasn't given the handoff message and decided to plan from scratch.
 
 **Fix:** Restore the original `spec.md` from git:
+
 ```bash
 git checkout HEAD -- .specify/specs/<feature>/spec.md
 ```
+
 Then re-paste the correct handoff message.
 
 ---
@@ -131,6 +141,7 @@ Then re-paste the correct handoff message.
 **Cause:** The agent checked off tasks without implementing them — a phantom completion.
 
 **Fix:**
+
 1. Run `git log --oneline` to see how many commits actually exist for the feature.
 2. Uncheck all tasks that have no matching commit: edit `tasks.md` and change `[x]` back to `[ ]`.
 3. Re-run the handoff with an explicit instruction: `For each task, you MUST write a git commit before marking it complete.`
@@ -190,6 +201,7 @@ Then re-paste the correct handoff message.
 **Cause:** Refactoring removed or simplified code that was previously covered, without adjusting tests.
 
 **Fix:** Run coverage locally to find uncovered lines:
+
 ```bash
 # Node.js / vitest
 pnpm test --coverage
@@ -197,6 +209,7 @@ pnpm test --coverage
 # Python / pytest
 pytest --cov=src --cov-report=term-missing
 ```
+
 Add tests for the uncovered lines before committing.
 
 ---
@@ -220,6 +233,7 @@ Add tests for the uncovered lines before committing.
 **Cause:** The agent bypassed the gate — either `constitution.md` didn't list the path as protected, or the agent ignored the constraint.
 
 **Fix:**
+
 1. Revert the commit: `git revert HEAD`
 2. Add the path to `constitution.md` as a protected path.
 3. Re-run the task with the corrected constitution loaded.
@@ -236,12 +250,15 @@ Add tests for the uncovered lines before committing.
 **Cause:** Some browsers block local file requests for bundled HTML. This is a browser security restriction, not a bug.
 
 **Fix:**
+
 - Use a simple local server instead of opening the file directly:
+
   ```bash
   # Python
   python -m http.server 8080
   # Then open http://localhost:8080/design/cookbook-explorer.html
   ```
+
 - Or use the [hosted GitHub Pages version](https://cloudbloqavi.github.io/ai-engineering-cookbook/design/cookbook-explorer.html).
 
 ---
@@ -253,6 +270,7 @@ Add tests for the uncovered lines before committing.
 **Cause:** GitHub renders Mermaid in markdown, but only when the code block uses ` ```mermaid ` (not ` ```mermaid{...} ` or other variants). The preview may also lag by a few seconds.
 
 **Fix:** Ensure the code fence is exactly:
+
 ````
 ```mermaid
 graph TD

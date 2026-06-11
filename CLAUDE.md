@@ -162,6 +162,7 @@ START
 ## 2. Workflow paths
 
 ### Greenfield (new project)
+
 ```
 /speckit.constitution → /speckit.specify → /speckit.clarify
   → /speckit.plan → /speckit.tasks
@@ -171,6 +172,7 @@ START
 ```
 
 ### Brownfield (existing codebase)
+
 ```
 /speckit.constitution (encode existing constraints)
   → /speckit.specify → /speckit.clarify → /speckit.plan → /speckit.tasks
@@ -181,6 +183,7 @@ START
 ```
 
 ### Bug fix (no Spec-Kit needed)
+
 ```
 systematic-debugging (root cause, not symptom)
   → RED test → GREEN fix → REFACTOR

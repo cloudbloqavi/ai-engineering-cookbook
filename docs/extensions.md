@@ -56,6 +56,7 @@ graph TD
 ## 📦 Extension Directory Tables
 
 ### 1. Pre-Spec & Setup Extensions
+
 Run these before starting the specification to establish architectural baselines.
 
 | Extension | Description | Fit | Where in Workflow | Skip When |
@@ -68,6 +69,7 @@ Run these before starting the specification to establish architectural baselines
 ---
 
 ### 2. Spec Phase Extensions
+
 Run these after `/speckit.clarify` but before `/speckit.plan` to harden the spec.
 
 | Extension | Description | Fit | Where in Workflow | Skip When |
@@ -79,6 +81,7 @@ Run these after `/speckit.clarify` but before `/speckit.plan` to harden the spec
 ---
 
 ### 3. Plan Phase Extensions
+
 Run these after `/speckit.plan` but before `/speckit.tasks` to identify scope creep and security risks.
 
 | Extension | Description | Fit | Where in Workflow | Skip When |
@@ -91,6 +94,7 @@ Run these after `/speckit.plan` but before `/speckit.tasks` to identify scope cr
 ---
 
 ### 4. Implementation Phase Extensions
+
 Integrate these directly into the Superpowers TDD loop (`RED ➔ GREEN ➔ REFACTOR`).
 
 | Extension | Description | Fit | Where in Workflow | Skip When |
@@ -102,6 +106,7 @@ Integrate these directly into the Superpowers TDD loop (`RED ➔ GREEN ➔ REFAC
 ---
 
 ### 5. Post-Implementation & Review Extensions
+
 Run these after all tasks are completed to enforce safety gates.
 
 | Extension | Description | Fit | Where in Workflow | Skip When |
@@ -137,20 +142,25 @@ Use this matrix to quickly select which extensions to run on a new feature or pr
 Copy these pre-configured extension sets for common project types:
 
 ### Minimal (New Greenfield Project)
+
 No extensions needed for day 1. Add `SpecTest` after your first spec is approved.
 
 ### Standard (Most Projects)
+
 `MemoryLint` → `Spec Critique` → `Version Guard` → `SpecTest` → `Verify Tasks` → `Security Review`
 
 ### High-Security (LLM / Fintech / Healthcare)
+
 `MemoryLint` → `Red Team` → `Spec Critique` → `OWASP LLM Threat Model` → `Version Guard` → `SpecTest` → `Checkpoint Extension` → `Verify Extension` → `Security Review`
 
 ### Legacy Brownfield
+
 `Brownfield Bootstrap` → `BrownKit` → `Project Health Check` → `MemoryLint` → `Red Team` → `Spec Critique` → `Architect Impact Previewer` → `Ripple` → `Verify Tasks` → `Reconcile`
 
 ---
 
 ### 📖 Next Steps
+
 - Learn how to install uv and tools: [Installation Guide](./installation.md)
 - Walk through a greenfield project: [Greenfield Guide](./greenfield.md)
 - View the 5-minute setup cheatsheet: [Quickstart Guide](../QUICKSTART.md)

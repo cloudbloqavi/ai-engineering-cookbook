@@ -7,6 +7,7 @@ Welcome! This guide is designed to get you set up and running your first AI-impl
 ## 🚀 3-Step Setup
 
 ### Step 1: Install `uv` (Fast Python Package Manager)
+
 Spec-Kit requires `uv` to manage dependencies. Run the following command:
 
 ```bash
@@ -19,11 +20,13 @@ powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 
 > [!NOTE]
 > **Windows users:** After installing `uv`, close and reopen your terminal before continuing. To reload the PATH without restarting, run:
+>
 > ```powershell
 > $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("PATH","User")
 > ```
 
 ### Step 2: Install Spec-Kit
+
 Install the Spec-Kit CLI globally using `uv`:
 
 ```bash
@@ -31,12 +34,14 @@ uv tool install specify-cli --from git+https://github.com/github/spec-kit.git
 ```
 
 Verify the installation:
+
 ```bash
 specify --version
 # Expected output: specify-cli x.y.z
 ```
 
 ### Step 3: Install Superpowers in your Agent
+
 If you are using **Claude Code**, run this command inside the chat interface:
 
 ```
@@ -53,6 +58,7 @@ If you are using **Claude Code**, run this command inside the chat interface:
 Let's build a small CLI calculator project to see the workflow in action.
 
 ### 1. Initialize the Project
+
 Create an empty folder and initialize Spec-Kit:
 
 ```bash
@@ -62,6 +68,7 @@ specify init . --integration claude
 ```
 
 ### 2. Set Up Your Constitution
+
 Define the tech stack and guidelines that the agent must adhere to:
 
 ```
@@ -71,14 +78,17 @@ Define the tech stack and guidelines that the agent must adhere to:
 ```
 
 ### 3. Specify the Feature
+
 Describe what you want to build. Spec-Kit will write the specifications:
 
 ```
 /speckit.specify Build a simple calculator that performs addition and subtraction.
 ```
+
 *This creates the `.specify/specs/001-simple-calculator/spec.md` file and a new Git branch.*
 
 ### 4. Clarify & Plan
+
 Let Spec-Kit ask questions and generate the step-by-step tasks:
 
 ```
@@ -87,9 +97,11 @@ Let Spec-Kit ask questions and generate the step-by-step tasks:
 /speckit.plan
 /speckit.tasks
 ```
+
 *This generates a `tasks.md` file, which is our formal checklist.*
 
 ### 5. Start Execution (The Handoff)
+
 Copy and paste the following handoff message to your coding agent:
 
 ```text
@@ -108,6 +120,7 @@ Constraints:
 ### ✅ What to Expect
 
 Once the handoff message is sent, Superpowers will:
+
 1. Create an isolated git worktree for this feature
 2. Pick up Task 1 from `tasks.md`
 3. Write a **failing test** (RED phase) — you'll see test output showing a failure
@@ -122,6 +135,7 @@ You don't need to do anything during this process. Monitor the output and step i
 ## ⚡ Command & Skill Cheatsheet
 
 ### Spec-Kit Commands (You Run These)
+
 | Command | Purpose | Output File |
 | :--- | :--- | :--- |
 | `/speckit.constitution` | Set project-wide rules & tech stack | `constitution.md` |
@@ -131,6 +145,7 @@ You don't need to do anything during this process. Monitor the output and step i
 | `/speckit.tasks` | Convert plan into a checklist | `tasks.md` (Handoff) |
 
 ### Superpowers Skills (Triggered Automatically)
+
 | Skill | Activates When... | Responsibility |
 | :--- | :--- | :--- |
 | `using-git-worktrees` | Handoff message is received | Creates isolated development environments |
@@ -155,6 +170,7 @@ You don't need to do anything during this process. Monitor the output and step i
 ---
 
 ### 📖 Next Steps
+
 - Learn more about the stack requirements: [Installation & Setup](./docs/installation.md)
 - Walk through a complex project from scratch: [Greenfield Guide](./docs/greenfield.md)
 - Add AI workflows to an existing app: [Brownfield Guide](./docs/brownfield.md)
