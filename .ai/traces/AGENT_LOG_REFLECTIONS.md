@@ -44,3 +44,14 @@ Copy this template for each new entry. Do not modify the structure.
 ---
 
 <!-- Real entries are appended below this line by agents during execution sessions. -->
+
+## [2026-06-11] Session: multi-agent-environment-installer
+
+**Task**: Make the `npx ai-engineering-cookbook` installer support multiple coding-agent environments (Cursor, GitHub Copilot, Codex, Antigravity, Roo, Claude) via an interactive multi-select, plus an "Others" option that installs into a `.coding/` placeholder folder for the user to rename.
+**Outcome**: COMPLETE
+**Changes made**: `bin/cli.js`, `bin/install-prompt-optimizer.js`, `bin/install-doc-coherence.js`, `README.md`
+**Frictions encountered**: Per-tool `--tool` profiles already existed in both installers, but the interactive `cli.js` path hard-defaulted to Claude with no environment prompt. Added an `others` profile (→ `.coding/skills`) with a post-install rename note, and a comma-separated multi-select prompt in `cli.js` that forks the installer once per selected tool. No interactive checkbox library was added (dependency policy requires maintainer approval) — used a dependency-free numeric multi-select instead.
+**Prompt clarity issues**: None blocking. The goal phrase "it only supports plot" was read as "only defaults to Claude" — confirmed by the code.
+**Suggested refinements**: If a true arrow-key checkbox UX is desired later, open a PR to add a vetted prompt library per the dependency policy.
+
+---

@@ -67,7 +67,29 @@ npx ai-engineering-cookbook doc-coherence
 npx ai-engineering-cookbook prompt-optimizer
 ```
 
-*(You can also run `npx ai-engineering-cookbook` without arguments for an interactive selection menu.)*
+*(You can also run `npx ai-engineering-cookbook` without arguments for an interactive menu that lets you pick a skill **and** select one or more coding-agent environments to install into.)*
+
+### 🎛️ Choosing your coding-agent environment
+
+Skills are not Claude-only. Run the bare command and the installer asks which agent environment(s) you want — you can **multi-select** by entering comma-separated numbers (e.g. `1,3,5`):
+
+| Environment | Skill folder |
+| :--- | :--- |
+| Claude Code | `.claude/skills` |
+| Cursor | `.cursor/skills` |
+| GitHub Copilot (VS Code) | `.github/skills` |
+| OpenAI Codex | `.codex/skills` |
+| Google Antigravity | `.agents/skills` |
+| Roo Code | `.roo/skills` |
+| **Others** | `.coding/skills` → rename `.coding/` to your tool's folder after install |
+
+Pick **Others** for any agent not in the list: the skill lands in a generic `.coding/` folder and the installer tells you to rename it to whatever directory your tool reads. You can also target a specific tool non-interactively with `--tool`:
+
+```bash
+npx ai-engineering-cookbook doc-coherence --tool cursor
+npx ai-engineering-cookbook prompt-optimizer --tool codex
+npx ai-engineering-cookbook prompt-optimizer --tool others   # → .coding/, rename afterward
+```
 
 | Skill | What it does | Run inside your repo |
 | :--- | :--- | :--- |
