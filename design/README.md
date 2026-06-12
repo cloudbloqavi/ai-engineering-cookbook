@@ -6,7 +6,7 @@ An interactive, single-page visual companion to this cookbook. Surfaces the two-
 
 | File | Purpose |
 | :--- | :--- |
-| `cookbook-explorer.html` | **Standalone bundle** — a single self-contained HTML file (≈1.5 MB). Open it directly in any browser, host on GitHub Pages, or attach to a release. No build step. |
+| `cookbook-explorer.html` | **Generated bundle** — a single self-contained HTML file built from `src/` by `scripts/build-explorer.js`. Open it directly in any browser, host on GitHub Pages, or attach to a release. Do not hand-edit; rebuild from source. |
 | `src/` | Editable source — split into `cookbook-data.jsx` (content), `cookbook-sections.jsx` (masthead, SDLC diagram, principles, walkthrough, TDD loop), `cookbook-app.jsx` (pod, gates, extensions, flywheel, app shell), `tweaks-panel.jsx` (in-page controls), and the host HTML. |
 
 ## How to view
@@ -24,18 +24,24 @@ open design/cookbook-explorer.html
 
 ## How to edit
 
-Edit any file in `design/src/`, then re-bundle (single-command CDN-free build) — or just keep editing the standalone HTML if minor.
+1. Edit any file in `design/src/` (the host HTML or one of the four `.jsx` files).
+2. Rebuild the bundle:
 
-> **⚠️ Source ↔ bundle can drift.** `cookbook-explorer.html` is a pre-built,
-> protected bundle and there is **no build script in the repo**, so edits to
-> `design/src/` do **not** appear in the served explorer until it is manually
-> re-bundled. When you change `design/src/`, re-bundle into
-> `cookbook-explorer.html` in the same change (or note the pending rebuild).
->
-> *Known pending rebuild:* the footer "Stack" tool list in
-> `src/cookbook-app.jsx` was broadened (Claude · Cursor · Copilot · Codex ·
-> Antigravity · Roo · + any agent) to match the multi-environment installer;
-> the bundle still shows the old list until it is regenerated.
+   ```bash
+   npm run build:explorer
+   ```
+
+3. Commit **both** the `src/` change and the regenerated `cookbook-explorer.html`.
+
+`scripts/build-explorer.js` is dependency-free (plain Node) and deterministic:
+it inlines the four JSX files into the host HTML in document order. React and
+Babel are loaded from their CDN, exactly as the host page declares them — so the
+bundle needs network access on first load (it is not vendored offline).
+
+> **CI keeps source ↔ bundle in sync.** The **Build Explorer** job rebuilds the
+> bundle on every PR and fails if the committed `cookbook-explorer.html` differs
+> from a fresh build (`npm run check:explorer`). If that check fails, run
+> `npm run build:explorer` and commit the result.
 
 ## What's in the explorer
 

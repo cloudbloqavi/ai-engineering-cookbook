@@ -327,7 +327,7 @@ DIRECTIVE 5 — BLAMELESS LEARNING (when errors or failures occur)
 | Test runner | `markdownlint` (lint) · `markdown-link-check` (broken links) · `cspell` (spell check) |
 | CI command | `markdownlint "**/*.md" --ignore node_modules` |
 | Coverage floor | N/A |
-| Protected paths | `design/cookbook-explorer.html` (pre-built bundle — do not regenerate manually) |
+| Protected paths | `design/cookbook-explorer.html` (generated bundle — do not hand-edit; rebuild from `design/src/` via `npm run build:explorer`) |
 | New dep policy | Open a PR describing the dependency and its purpose; maintainer approval required |
 | Branch pattern | `<type>/<kebab-slug>` (e.g. `improvements/cookbook-review`, `docs/add-faq`, `fix/broken-links`) |
 

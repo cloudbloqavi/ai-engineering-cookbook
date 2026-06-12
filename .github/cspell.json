@@ -88,7 +88,9 @@
     "Antigravity",
     "codex",
     "Codex",
-    "roo"
+    "roo",
+    "inlines",
+    "inliner"
   ],
   "ignorePaths": [
     "node_modules",

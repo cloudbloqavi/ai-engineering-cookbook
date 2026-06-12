@@ -37,6 +37,26 @@ jobs:
             | xargs -I {} markdown-link-check {} \
               --config .github/mlc-config.json
 
+  build-explorer:
+    name: Build Explorer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Rebuild the explorer bundle from design/src
+        run: npm run build:explorer
+
+      - name: Fail if the committed bundle is out of date
+        run: |
+          if ! git diff --exit-code -- design/cookbook-explorer.html; then
+            echo "::error::design/cookbook-explorer.html is stale. Run 'npm run build:explorer' and commit the result."
+            exit 1
+          fi
+
   spell-check:
     name: Spell Check (Advisory)
     runs-on: ubuntu-latest
