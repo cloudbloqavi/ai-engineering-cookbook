@@ -1,6 +1,6 @@
 # AI-Native SDLC Governance and Observability
 
-A major challenge in AI-native engineering is that **AI amplifies bad decisions as fast as it implements good ones.** Without structure, agents make undocumented design assumptions, bypass testing, and introduce technical debt. 
+A major challenge in AI-native engineering is that **AI amplifies bad decisions as fast as it implements good ones.** Without structure, agents make undocumented design assumptions, bypass testing, and introduce technical debt.
 
 The **AI-Native SDLC Framework** adds a governance, alignment, and observability layer on top of Spec-Kit and Superpowers. It ensures every execution session is tracked, failures lead to systematic learning rather than blame, and the development pipeline gets measurably smarter with each feature built.
 
@@ -26,6 +26,7 @@ graph TD
 We use two primary files to record execution and track failures. These files should be treated as the project's source of truth for engineering velocity and quality.
 
 ### 1. The Agent Execution Journal (`.ai/traces/AGENT_LOG_REFLECTIONS.md`)
+
 Agents append to this log automatically after **every implementation session** (before committing a task). It captures immediate developer friction.
 
 - **Outcome**: `COMPLETE`, `PARTIAL`, or `BLOCKED`.
@@ -33,6 +34,7 @@ Agents append to this log automatically after **every implementation session** (
 - **Suggested Refinements**: Proposed prompt updates or rule adjustments.
 
 ### 2. The Blameless Postmortem Log (`postmortems/POSTMORTEM_AND_LEARNING_LOG.md`)
+
 Humans and Verifier agents create entries here only when **a bug escapes normal test gates** and reaches staging or production.
 
 - **Philosophy**: Postmortems are 100% blameless. The goal is to identify the system failure, not the person or agent who caused it.
@@ -80,6 +82,7 @@ By codifying these verification gates, the AI is constrained to execute safely a
 ---
 
 ### 📖 Next Steps
+
 - Group by phase and configure helper tools: [Extensions Guide](./extensions.md)
 - Set up your local machine: [Installation Guide](./installation.md)
 - Review the CLI cheatsheet: [Quickstart Guide](../QUICKSTART.md)

@@ -19,9 +19,11 @@ npx ai-engineering-cookbook prompt-optimizer
 > **💡 Note on execution:** Since this cookbook is published to npm, we use `npx ai-engineering-cookbook prompt-optimizer` as a single router entry point. This downloads and runs the installer directly without polluting your global node_modules. Requires **Node.js 18+**.
 
 ### 🛠️ Troubleshooting & Fallbacks (If npx fails)
+
 If `npx` fails or you are working in an environment with restricted network access/unresolved binary shims (common with direct GitHub URLs on Windows), you can install the package via `npm`:
 
 #### Local Fallback (Recommended)
+
 ```bash
 # From npm registry:
 npm install --save-dev ai-engineering-cookbook
@@ -33,6 +35,7 @@ npx ai-engineering-cookbook prompt-optimizer
 ```
 
 #### Global Fallback
+
 ```bash
 # From npm registry:
 npm install -g ai-engineering-cookbook

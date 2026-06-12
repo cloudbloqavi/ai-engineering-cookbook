@@ -30,7 +30,9 @@ sequenceDiagram
 ## 🚀 Step-by-Step Command Sequence
 
 ### Step 1: Initialize the Project
+
 Create a blank directory and initialize Spec-Kit:
+
 ```bash
 mkdir expense-tracker
 cd expense-tracker
@@ -38,7 +40,9 @@ specify init . --integration claude
 ```
 
 ### Step 2: Set the Project Constitution
+
 Define the tech stack, rules, and folder structure. Spec-Kit will write this to `.specify/memory/constitution.md`.
+
 ```
 /speckit.constitution Create principles for an expense tracker:
   - Tech stack: Next.js 14 (App Router), TypeScript, Tailwind CSS, Prisma with SQLite
@@ -48,7 +52,9 @@ Define the tech stack, rules, and folder structure. Spec-Kit will write this to 
 ```
 
 ### Step 3: Write the Specification
+
 Describe the user-facing feature. Do not mention technical code details yet; focus on *what* the application does.
+
 ```
 /speckit.specify Build a simple expense tracker dashboard.
 Users can add an expense with an amount, category, date, and description.
@@ -56,13 +62,17 @@ Users can view a list of expenses sorted by date (newest first).
 Users can filter expenses by category.
 Show a running total of the visible expenses.
 ```
+
 *Creates: `.specify/specs/001-expense-tracker/spec.md`*
 
 ### Step 4: Run Clarification Q&A
+
 Let Spec-Kit analyze the spec and ask clarifying questions to remove assumptions.
+
 ```
 /speckit.clarify
 ```
+
 *Example Interaction:*
 > **Spec-Kit**: What are the pre-defined categories? Or can users create custom ones?  
 > **You**: Use a pre-defined list: Food, Rent, Transport, Entertainment, Utilities, Other.  
@@ -70,17 +80,23 @@ Let Spec-Kit analyze the spec and ask clarifying questions to remove assumptions
 > **You**: Yes, use a local SQLite database through Prisma.
 
 ### Step 5: Generate the Technical Plan
+
 Now that the features and constraints are crystal clear, write the plan showing exactly which files will be created or modified.
+
 ```
 /speckit.plan
 ```
+
 *Creates: `.specify/specs/001-expense-tracker/plan.md`*
 
 ### Step 6: Generate Tasks
+
 Convert the technical plan into a checkbox checklist.
+
 ```
 /speckit.tasks
 ```
+
 *Creates: `.specify/specs/001-expense-tracker/tasks.md`*
 
 ---
@@ -108,6 +124,7 @@ Constraints:
 Here is what the Spec-Kit files look like for this project:
 
 ### 1. Specification (`spec.md`)
+
 ```markdown
 # Spec: Expense Tracker Dashboard
 
@@ -122,6 +139,7 @@ Here is what the Spec-Kit files look like for this project:
 ```
 
 ### 2. Technical Plan (`plan.md`)
+
 ```markdown
 # Plan: Expense Tracker Dashboard
 
@@ -137,6 +155,7 @@ Here is what the Spec-Kit files look like for this project:
 ```
 
 ### 3. Checklist (`tasks.md`)
+
 ```markdown
 - [ ] Task 1: Setup Prisma schema with Expense model and run migrations.
 - [ ] Task 2: Implement database client helper and seed script.
@@ -172,6 +191,7 @@ By following this sequence, you ensure that every line of code generated has a c
 ---
 
 ### 📖 Next Steps
+
 - Learn how to work in existing codebases: [Brownfield Guide](./brownfield.md)
 - Learn how to use community extensions: [Extensions Guide](./extensions.md)
 - Set up automated quality gates: [AI Governance Guide](./governance.md)

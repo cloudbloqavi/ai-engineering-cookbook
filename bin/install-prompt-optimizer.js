@@ -14,8 +14,8 @@
  *   install-prompt-optimizer [options]
  *
  * Options:
- *   --tool <name>   Target tool: claude | cursor | roo | vscode | codex | antigravity | custom.
- *                   Default: claude.
+ *   --tool <name>   Target tool: claude | cursor | roo | vscode | codex | antigravity | others | custom.
+ *                   Default: claude. "others" installs into a .coding/ folder to rename later.
  *   --target <dir>  With --tool custom, install SKILL.md under <dir>/<name>/.
  *   --user          Install to the tool's user-global config dir if supported.
  *                   (Claude Code: ~/.claude/. Cursor/Roo: not supported — project only.)
@@ -55,7 +55,7 @@ if (opts.help) {
       "  install-prompt-optimizer [options]",
       "",
       "Options:",
-      "  --tool <name>   claude (default) | cursor | roo | vscode | codex | antigravity | custom",
+      "  --tool <name>   claude (default) | cursor | roo | vscode | codex | antigravity | others | custom",
       "  --target <dir>  Required with --tool custom. Skill lands at <dir>/prompt-optimizer/SKILL.md.",
       "  --user          Install to user-global dir if supported (claude, codex, antigravity, vscode).",
       "  --no-hook       Claude Code only: skill only; skip the session-start gate hook.",
@@ -125,6 +125,13 @@ const TOOL_PROFILES = {
     skillsDirUser: path.join(os.homedir(), ".gemini", "antigravity", "skills"),
     supportsUser: true,
     supportsHook: false,
+  },
+  others: {
+    label: "Other / unlisted agent",
+    skillsDirProject: ".coding/skills",
+    supportsUser: false,
+    supportsHook: false,
+    renameNote: true,
   },
   custom: { label: "Custom", supportsUser: false, supportsHook: false },
 };
@@ -251,6 +258,14 @@ if (opts.tool === "claude") {
   if (!opts.noHook) {
     log("  3. Start a new session with a prompt > 30 chars — the gate should ask if you want to optimize.");
   }
+} else if (profile.renameNote) {
+  const placeholderDir = path.resolve(process.cwd(), ".coding");
+  log("\x1b[1m\x1b[33m  ! Installed into a placeholder directory: .coding/\x1b[0m");
+  log(`     ${placeholderDir}`);
+  log("  Your agent was not in the known list, so the skill landed in a generic folder.");
+  log("  1. Rename .coding/ to the skills directory your agent actually reads, e.g.:");
+  log("       mv .coding .<your-agent>   # (whatever config dir your tool expects)");
+  log(`  2. Restart ${profile.label} so it picks up the skill.`);
 } else {
   log(`  1. Restart ${profile.label} so it picks up the new skill.`);
   log(`  2. Invoke the skill by asking your agent to "use the prompt-optimizer skill on this: ..."`);

@@ -16,8 +16,9 @@
  *   install-doc-coherence [options]
  *
  * Options:
- *   --tool <name>   Target tool: claude | cursor | roo | vscode | codex | antigravity | custom.
+ *   --tool <name>   Target tool: claude | cursor | roo | vscode | codex | antigravity | others | custom.
  *                   Default: claude. (Controls only where SKILL.md lands.)
+ *                   "others" installs into a .coding/ folder to rename later.
  *   --target <dir>  With --tool custom, install SKILL.md under <dir>/doc-coherence/.
  *   --user          Install the SKILL.md to the tool's user-global config dir if
  *                   supported. The gate (script + config) is always project-scoped.
@@ -59,7 +60,7 @@ if (opts.help) {
       "  install-doc-coherence [options]",
       "",
       "Options:",
-      "  --tool <name>   claude (default) | cursor | roo | vscode | codex | antigravity | custom",
+      "  --tool <name>   claude (default) | cursor | roo | vscode | codex | antigravity | others | custom",
       "  --target <dir>  Required with --tool custom. Skill lands at <dir>/doc-coherence/SKILL.md.",
       "  --user          Install SKILL.md to user-global dir if supported. Gate stays project-scoped.",
       "  --skill-only    Install only SKILL.md; skip checker script + registry.",
@@ -120,6 +121,12 @@ const TOOL_PROFILES = {
     skillsDirProject: ".agents/skills",
     skillsDirUser: path.join(os.homedir(), ".gemini", "antigravity", "skills"),
     supportsUser: true,
+  },
+  others: {
+    label: "Other / unlisted agent",
+    skillsDirProject: ".coding/skills",
+    supportsUser: false,
+    renameNote: true,
   },
   custom: { label: "Custom", supportsUser: false },
 };
@@ -198,6 +205,14 @@ log("Done. Next steps:");
 if (opts.tool === "claude") {
   log("  1. Restart Claude Code (or open a new session) so the skill registers.");
   log("  2. Try `/doc-coherence` (or ask the agent to use the doc-coherence skill).");
+} else if (profile.renameNote) {
+  const placeholderDir = path.resolve(cwd, ".coding");
+  log("\x1b[1m\x1b[33m  ! Installed into a placeholder directory: .coding/\x1b[0m");
+  log(`     ${placeholderDir}`);
+  log("  Your agent was not in the known list, so the skill landed in a generic folder.");
+  log("  1. Rename .coding/ to the skills directory your agent actually reads, e.g.:");
+  log("       mv .coding .<your-agent>   # (whatever config dir your tool expects)");
+  log(`  2. Restart ${profile.label} so it picks up the skill.`);
 } else {
   log(`  1. Restart ${profile.label} so it picks up the new skill.`);
   log(`  2. Ask your agent to "use the doc-coherence skill to audit our docs".`);

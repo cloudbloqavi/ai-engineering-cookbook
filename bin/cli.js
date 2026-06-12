@@ -11,6 +11,19 @@ const subcommands = {
   'install-prompt-optimizer': './install-prompt-optimizer.js'
 };
 
+// Coding-agent environments the installer can target. `tool` is passed through
+// to the underlying installer via `--tool <tool>`. "others" lands in a generic
+// .coding/ folder the user renames to whatever their agent expects.
+const ENVIRONMENTS = [
+  { tool: 'claude', label: 'Claude Code', dir: '.claude/skills' },
+  { tool: 'cursor', label: 'Cursor', dir: '.cursor/skills' },
+  { tool: 'vscode', label: 'GitHub Copilot (VS Code)', dir: '.github/skills' },
+  { tool: 'codex', label: 'OpenAI Codex', dir: '.codex/skills' },
+  { tool: 'antigravity', label: 'Google Antigravity', dir: '.agents/skills' },
+  { tool: 'roo', label: 'Roo Code', dir: '.roo/skills' },
+  { tool: 'others', label: 'Others (installs to .coding/, rename it afterward)', dir: '.coding/skills' }
+];
+
 function showHelp() {
   process.stdout.write(
     [
@@ -19,6 +32,7 @@ function showHelp() {
       '',
       '\x1b[1mUsage:\x1b[0m',
       '  npx ai-engineering-cookbook <skill-name> [options]',
+      '  # Run with no arguments for an interactive picker (skill + environments).',
       '  # Fallback (if installed globally or locally):',
       '  ai-engineering-cookbook <skill-name> [options]',
       '',
@@ -26,8 +40,12 @@ function showHelp() {
       '  \x1b[1mdoc-coherence\x1b[0m     Kills cross-document drift with a single-source-of-truth gate.',
       '  \x1b[1mprompt-optimizer\x1b[0m  Optimizes agent prompts on session-start with custom scorecards.',
       '',
+      '\x1b[1mSupported coding-agent environments:\x1b[0m',
+      '  claude · cursor · vscode (GitHub Copilot) · codex · antigravity · roo · others',
+      '  "others" installs into a .coding/ folder you rename to match your tool afterward.',
+      '',
       '\x1b[1mOptions (passed through to installer):\x1b[0m',
-      '  --tool <name>    Target tool: claude (default) | cursor | roo | vscode | codex | antigravity | custom',
+      '  --tool <name>    Target tool: claude (default) | cursor | vscode | codex | antigravity | roo | others | custom',
       '  --target <dir>   With --tool custom, directory where SKILL.md will land',
       '  --user           Install the skill to the tool\'s user-global config directory',
       '  --force          Overwrite existing files',
@@ -35,7 +53,8 @@ function showHelp() {
       '  -h, --help       Show help',
       '',
       '\x1b[1mExamples:\x1b[0m',
-      '  npx ai-engineering-cookbook doc-coherence',
+      '  npx ai-engineering-cookbook                       # interactive picker',
+      '  npx ai-engineering-cookbook doc-coherence         # Claude Code (default)',
       '  npx ai-engineering-cookbook prompt-optimizer --tool cursor',
       '  ai-engineering-cookbook doc-coherence --dry-run',
       ''
@@ -43,11 +62,64 @@ function showHelp() {
   );
 }
 
-function runScript(scriptPath, args) {
+// Run the installer once per selected tool, sequentially. Exits with the first
+// non-zero code so a single failure is visible.
+function runForTools(scriptPath, tools, extraArgs = []) {
   const fullPath = path.resolve(__dirname, scriptPath);
-  const child = fork(fullPath, args, { stdio: 'inherit' });
-  child.on('close', (code) => {
-    process.exit(code ?? 0);
+  let index = 0;
+  let exitCode = 0;
+
+  const next = () => {
+    if (index >= tools.length) {
+      process.exit(exitCode);
+      return;
+    }
+    const tool = tools[index++];
+    process.stdout.write(`\n\x1b[1m\x1b[36m── Installing for ${tool} ──\x1b[0m\n`);
+    const child = fork(fullPath, ['--tool', tool, ...extraArgs], { stdio: 'inherit' });
+    child.on('close', (code) => {
+      if (code && !exitCode) exitCode = code;
+      next();
+    });
+  };
+
+  next();
+}
+
+function parseSelection(raw, max) {
+  // Accept comma/space separated numbers, e.g. "1,3 5". Empty → default [1].
+  const trimmed = raw.trim();
+  if (trimmed === '') return [1];
+  const parts = trimmed.split(/[\s,]+/).filter(Boolean);
+  const picks = [];
+  for (const p of parts) {
+    const n = Number(p);
+    if (!Number.isInteger(n) || n < 1 || n > max) return null;
+    if (!picks.includes(n)) picks.push(n);
+  }
+  return picks.length ? picks : null;
+}
+
+function promptEnvironments(rl, scriptPath) {
+  process.stdout.write('\n\x1b[1mSelect the coding-agent environment(s) to install into.\x1b[0m\n');
+  process.stdout.write('You can pick more than one — separate numbers with commas (e.g. 1,3,5).\n\n');
+  ENVIRONMENTS.forEach((env, i) => {
+    process.stdout.write(`  \x1b[1m${i + 1})\x1b[0m \x1b[32m${env.label}\x1b[0m  \x1b[2m${env.dir}\x1b[0m\n`);
+  });
+  process.stdout.write('\n');
+
+  rl.question(`\x1b[1mEnter choice(s) [1-${ENVIRONMENTS.length}] (default 1 = Claude Code):\x1b[0m `, (answer) => {
+    const picks = parseSelection(answer, ENVIRONMENTS.length);
+    if (!picks) {
+      rl.close();
+      process.stderr.write(`\x1b[31mInvalid selection.\x1b[0m Enter numbers between 1 and ${ENVIRONMENTS.length}, e.g. 1,3.\n`);
+      process.exit(1);
+      return;
+    }
+    rl.close();
+    const tools = picks.map((n) => ENVIRONMENTS[n - 1].tool);
+    process.stdout.write(`\nInstalling into: \x1b[1m${tools.join(', ')}\x1b[0m\n`);
+    runForTools(scriptPath, tools);
   });
 }
 
@@ -64,16 +136,17 @@ function promptUser() {
   });
 
   rl.question('\x1b[1mEnter choice [1-3]:\x1b[0m ', (choice) => {
-    rl.close();
     const trimmed = choice.trim();
     if (trimmed === '1') {
-      runScript(subcommands['doc-coherence'], []);
+      promptEnvironments(rl, subcommands['doc-coherence']);
     } else if (trimmed === '2') {
-      runScript(subcommands['prompt-optimizer'], []);
+      promptEnvironments(rl, subcommands['prompt-optimizer']);
     } else if (trimmed === '3' || trimmed.toLowerCase() === 'exit') {
+      rl.close();
       process.stdout.write('Exiting.\n');
       process.exit(0);
     } else {
+      rl.close();
       process.stderr.write('\x1b[31mInvalid selection.\x1b[0m Please run again and select 1, 2, or 3.\n');
       process.exit(1);
     }
@@ -95,7 +168,10 @@ if (!cmd) {
   showHelp();
   process.exit(0);
 } else if (subcommands[cmd]) {
-  runScript(subcommands[cmd], args.slice(1));
+  const rest = args.slice(1);
+  const fullPath = path.resolve(__dirname, subcommands[cmd]);
+  const child = fork(fullPath, rest, { stdio: 'inherit' });
+  child.on('close', (code) => process.exit(code ?? 0));
 } else {
   process.stderr.write(`\x1b[31mUnknown command:\x1b[0m "${cmd}"\n\n`);
   showHelp();

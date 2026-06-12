@@ -11,6 +11,24 @@
     },
     {
       "pattern": "^https://cloudbloqavi.github.io"
+    },
+    {
+      "pattern": "^https://agentskills.io"
+    },
+    {
+      "pattern": "^https://cursor.com"
+    },
+    {
+      "pattern": "^https://developers.openai.com"
+    },
+    {
+      "pattern": "^https://docs.roocode.com"
+    },
+    {
+      "pattern": "^https://code.visualstudio.com"
+    },
+    {
+      "pattern": "^https://antigravity.google"
     }
   ],
   "aliveStatusCodes": [200, 206, 429],

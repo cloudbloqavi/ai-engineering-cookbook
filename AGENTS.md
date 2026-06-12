@@ -30,26 +30,31 @@ graph LR
 ## Role Summaries
 
 ### 🗂️ Planner
+
 Translates human intent into `spec.md` acceptance criteria. Runs `/speckit.clarify` to flush ambiguities *before* planning. Every criterion must be mechanically verifiable.
 
 **Key rule:** Does not proceed to plan generation without explicit user approval on acceptance criteria.
 
 ### 🔀 Orchestrator
+
 Loads context at session start, routes tasks to the correct agent, and enforces the handoff boundary between Spec-Kit and Superpowers. Escalates blocked states to the user rather than guessing.
 
 **Key rule:** Issues the standard handoff message (see [Greenfield Guide](./docs/greenfield.md) or [Brownfield Guide](./docs/brownfield.md)) only after `tasks.md` is confirmed ready.
 
 ### 💻 Coder
+
 Executes the TDD loop for each task: write a failing test → write minimum code to pass → refactor. Appends an execution log entry to `.ai/traces/AGENT_LOG_REFLECTIONS.md` after every session.
 
 **Key rule:** Writes minimum code only. No gold-plating, no unrequested abstractions.
 
 ### 🔍 Reviewer
+
 Two-stage review: (1) spec compliance — does the output satisfy every acceptance criterion? (2) code quality — is it clean, minimal, consistent with the existing style? Blocks on critical issues; fixes minor ones inline.
 
 **Key rule:** Stage 1 must pass before Stage 2 begins.
 
 ### ✅ Verifier
+
 Runs all gates defined in `.ai/config/VERIFICATION_AND_EVAL_GUIDE.md`. Catches phantom completions. Triggers a postmortem entry if any gate fails before merge.
 
 **Key rule:** Gate failure halts the branch. Logs to postmortems before surfacing the violation to the user.

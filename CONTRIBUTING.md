@@ -44,12 +44,14 @@ Use this pattern: `<type>/<kebab-slug>`
 - **Tables over prose** for structured information — easier to scan.
 - **Mermaid diagrams** for workflows and relationships. Use `graph TD` (top-down) for flows, `sequenceDiagram` for step-by-step interactions.
 - **GitHub admonitions** for callout boxes:
+
   ```markdown
   > [!NOTE]    ← informational, non-blocking
   > [!TIP]     ← helpful suggestion
   > [!WARNING] ← action that could cause problems
   > [!IMPORTANT] ← must-read before proceeding
   ```
+
 - **Code blocks** with language tags for all commands and file contents.
 - **Relative links** between docs (e.g. `[Greenfield Guide](./docs/greenfield.md)`).
 - One blank line between sections; two blank lines before `---` horizontal rules.
@@ -76,6 +78,7 @@ Extensions are community tools that plug into specific points of the workflow. T
 ## Adding a Real-World Example
 
 Examples live inside the workflow guides (e.g. the Expense Tracker in `docs/greenfield.md`). A good example:
+
 - Uses a realistic, relatable scenario (not "foo/bar")
 - Shows all three Spec-Kit artifacts: `spec.md`, `plan.md`, `tasks.md`
 - Includes at least one acceptance criterion and its corresponding test
