@@ -26,6 +26,17 @@ open design/cookbook-explorer.html
 
 Edit any file in `design/src/`, then re-bundle (single-command CDN-free build) — or just keep editing the standalone HTML if minor.
 
+> **⚠️ Source ↔ bundle can drift.** `cookbook-explorer.html` is a pre-built,
+> protected bundle and there is **no build script in the repo**, so edits to
+> `design/src/` do **not** appear in the served explorer until it is manually
+> re-bundled. When you change `design/src/`, re-bundle into
+> `cookbook-explorer.html` in the same change (or note the pending rebuild).
+>
+> *Known pending rebuild:* the footer "Stack" tool list in
+> `src/cookbook-app.jsx` was broadened (Claude · Cursor · Copilot · Codex ·
+> Antigravity · Roo · + any agent) to match the multi-environment installer;
+> the bundle still shows the old list until it is regenerated.
+
 ## What's in the explorer
 
 | Section | Source |
