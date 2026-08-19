@@ -2,7 +2,7 @@ name: Docs CI
 
 on:
   push:
-    branches: ["main", "improvements/**", "docs/**", "fix/**", "feat/**"]
+    branches: ["main", "improvements/**", "docs/**", "fix/**", "feat/**", "ci/**", "chore/**"]
   pull_request:
     branches: ["main"]
 
@@ -36,6 +36,20 @@ jobs:
             -not -path "./.claude/*" \
             | xargs -I {} markdown-link-check {} \
               --config .github/mlc-config.json
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # No dependencies to install — the suite uses node:test, built into Node.
+      - name: Run the test suite
+        run: npm test
 
   build-explorer:
     name: Build Explorer

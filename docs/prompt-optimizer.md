@@ -28,7 +28,7 @@ If `npx` fails or you are working in an environment with restricted network acce
 # From npm registry:
 npm install --save-dev ai-engineering-cookbook
 # OR from GitHub:
-npm install --save-dev github:cloudbloqavi/ai-engineering-cookbook
+npm install --save-dev github:exponen-agi/ai-engineering-cookbook
 
 # Run the installer:
 npx ai-engineering-cookbook prompt-optimizer
@@ -40,7 +40,7 @@ npx ai-engineering-cookbook prompt-optimizer
 # From npm registry:
 npm install -g ai-engineering-cookbook
 # OR from GitHub:
-npm install -g github:cloudbloqavi/ai-engineering-cookbook
+npm install -g github:exponen-agi/ai-engineering-cookbook
 
 # Run the installer:
 ai-engineering-cookbook prompt-optimizer
@@ -91,7 +91,13 @@ Open `.claude/hooks/prompt-optimizer-gate.js` and edit `MIN_LENGTH` (default `30
 ### Uninstall
 
 ```bash
+# macOS / Linux
 rm -rf .claude/skills/prompt-optimizer .claude/hooks/prompt-optimizer-gate.js .claude/state/prompt-optimizer
+```
+
+```powershell
+# Windows (PowerShell) — Windows paths use backslashes
+Remove-Item -Recurse -Force .claude\skills\prompt-optimizer, .claude\hooks\prompt-optimizer-gate.js, .claude\state\prompt-optimizer
 ```
 
 Remove the `UserPromptSubmit` entry from `.claude/settings.json`.

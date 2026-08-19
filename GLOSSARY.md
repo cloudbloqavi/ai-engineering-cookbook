@@ -16,6 +16,24 @@ See [Greenfield Guide](./docs/greenfield.md)
 
 ---
 
+## Agent Skill (`SKILL.md`)
+
+A folder that packages one reusable ability for an agent. It contains a `SKILL.md` file — a short YAML header with a `name` and a `description`, then Markdown instructions — plus optional helper scripts and reference files. The same folder works across Claude Code, Cursor, Codex, Copilot and other tools, because the format is an open specification.
+
+> **Example:** a `release-notes` skill that tells the agent how to turn a git log into a changelog.
+
+See [Agent Standards](./docs/agent-standards.md)
+
+---
+
+## AGENTS.md
+
+A plain Markdown file at the root of a repository that tells any coding agent how to work in that project — how to install, how to run the tests, which folders are off limits. It is read at the start of every session, so it should stay short. Governed by the Agentic AI Foundation under the Linux Foundation.
+
+See [Agent Standards](./docs/agent-standards.md)
+
+---
+
 ## AI Agent / Coding Agent
 
 An AI model (such as Claude Code, Cursor, or GitHub Copilot) that can read files, write code, run commands, and make decisions — all within a defined scope. In this cookbook, agents are given specific roles and constraints so they behave predictably.
@@ -84,6 +102,14 @@ See [Brownfield Workflow Guide](./docs/brownfield.md)
 
 ---
 
+## Eval / Golden Dataset
+
+An **eval** is an automated check on the *quality of a model's output*, as opposed to a test that checks whether code runs. It works from a **golden dataset**: a fixed list of inputs paired with what a good answer looks like. Running the eval scores every case, so you can tell whether a prompt or model change made things better or worse. Ten real cases taken from actual failures are worth more than a thousand invented ones.
+
+See [Evaluation & Observability](./docs/evaluation-and-observability.md)
+
+---
+
 ## Execution Log / Reflections Log
 
 The append-only journal at `.ai/traces/AGENT_LOG_REFLECTIONS.md` where agents record what happened after every implementation session: outcome (COMPLETE / PARTIAL / BLOCKED), frictions encountered, and suggested improvements. Never overwritten — always appended.
@@ -141,6 +167,30 @@ See [Greenfield Guide](./docs/greenfield.md)
 
 ---
 
+## LLM-as-Judge
+
+Using a second AI model to score the output of the first — useful for qualities a regular expression cannot express, such as tone or reasoning quality. Judges are systematically optimistic, so before trusting one you must **calibrate** it: have a human label about 50 outputs, run the judge on the same 50, and check how often they agree. An uncalibrated judge measures the judge, not your product.
+
+See [Evaluation & Observability](./docs/evaluation-and-observability.md)
+
+---
+
+## MCP (Model Context Protocol)
+
+An open standard that lets an agent call tools and read data living outside itself — a database, a ticket tracker, an internal API. You write one MCP **server** for your system and every MCP-capable **client** can use it. Since the `2026-07-28` revision the protocol is **stateless**: there is no session handshake, so a server is an ordinary HTTP service that scales like any other. Governed by the Agentic AI Foundation under the Linux Foundation.
+
+See [Agent Standards](./docs/agent-standards.md)
+
+---
+
+## Observability / Trace
+
+Recording what an agent actually did during a run. One run produces one **trace**, made up of **spans** — one per step (each model call, each tool call) with its duration, token count and cost. Observability tells you *what happened*; an eval tells you *whether it was good*. You need both, in that order.
+
+See [Evaluation & Observability](./docs/evaluation-and-observability.md)
+
+---
+
 ## Orchestrator (agent role)
 
 The agent role that manages routing between other roles. It loads context at session start, enforces the Spec-Kit → Superpowers handoff boundary, and escalates blocked states to the human.
@@ -168,6 +218,14 @@ See [Greenfield Guide](./docs/greenfield.md)
 The agent role responsible for translating a human's idea into a verified `spec.md` with testable acceptance criteria. Runs clarification Q&A to flush ambiguities before planning begins.
 
 See [AGENTS.md](./AGENTS.md)
+
+---
+
+## Progressive Disclosure
+
+The three-stage loading model that makes agent skills cheap to keep installed. Stage 1: only the skill's `name` and `description` stay in the agent's context — around a hundred tokens each. Stage 2: the `SKILL.md` body loads only when a task matches that description. Stage 3: bundled scripts and reference files load only if the body points to them. This is why you can install fifty skills and pay for almost none of them.
+
+See [Agent Standards](./docs/agent-standards.md)
 
 ---
 

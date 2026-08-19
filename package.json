@@ -9,6 +9,7 @@
     "install-doc-coherence": "./bin/install-doc-coherence.js"
   },
   "scripts": {
+    "test": "node --test",
     "lint:docs": "node scripts/check-doc-coherence.js",
     "build:explorer": "node scripts/build-explorer.js",
     "check:explorer": "node scripts/build-explorer.js --check"
@@ -25,7 +26,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cloudbloqavi/ai-engineering-cookbook.git"
+    "url": "git+https://github.com/exponen-agi/ai-engineering-cookbook.git"
   },
   "license": "MIT"
 }

@@ -8,8 +8,8 @@ const COOKBOOK = {
     title: "AI Engineering",
     titleItalic: "Cookbook",
     subtitle: "Practical patterns for building software autonomously with AI agents.",
-    repo: "cloudbloqavi/ai-engineering-cookbook",
-    edition: "Edition 2026.05",
+    repo: "exponen-agi/ai-engineering-cookbook",
+    edition: "Edition 2026.08",
   },
 
   principles: [
@@ -359,6 +359,50 @@ Constraints:
     { name: "Ripple", fit: "Both", phase: "Post", note: "After all tasks complete", skip: "Greenfield with no deps" },
     { name: "Security Review", fit: "Both", phase: "Post", note: "Before finishing branch", skip: "Internal prototypes" },
     { name: "Reconcile", fit: "Both", phase: "Post", note: "Branches open > 1 week", skip: "Short-lived branches" },
+  ],
+
+  // The 2026 agent interop stack — see docs/agent-standards.md
+  stack2026: [
+    {
+      layer: "AGENTS.md",
+      scope: "Project",
+      load: "Always loaded",
+      what: "One file at the repo root telling every coding agent how this project works — build commands, test commands, house rules.",
+      why: "Read natively by Claude Code, Codex, Cursor, Copilot, Gemini CLI and more. Write the rules once instead of once per tool.",
+      home: "Agentic AI Foundation (Linux Foundation)",
+    },
+    {
+      layer: "SKILL.md",
+      scope: "Capability",
+      load: "Loaded on demand",
+      what: "A folder holding one reusable capability: a Markdown file with name + description frontmatter, plus optional scripts and reference files.",
+      why: "Progressive disclosure keeps context cheap — only the name and description stay resident until a task actually needs the skill.",
+      home: "agentskills.io (open specification)",
+    },
+    {
+      layer: "MCP",
+      scope: "Tools & data",
+      load: "Called at runtime",
+      what: "A protocol for exposing tools, data and prompts to an agent over HTTP, so any client can call any server.",
+      why: "The 2026-07-28 revision dropped the session handshake. Servers are now ordinary stateless HTTP workloads — any request can hit any instance.",
+      home: "Agentic AI Foundation (Linux Foundation)",
+    },
+    {
+      layer: "Evals",
+      scope: "Output quality",
+      load: "Run in CI + on production traffic",
+      what: "A fixed set of inputs with known-good outputs, scored automatically so you can tell whether a prompt or model change made things better or worse.",
+      why: "Tracing tells you what the agent did. Only an eval tells you whether it did it well. Most teams have the first and not the second.",
+      home: "promptfoo · DeepEval · Langfuse",
+    },
+    {
+      layer: "OTel GenAI",
+      scope: "Observability",
+      load: "Emitted every run",
+      what: "OpenTelemetry semantic conventions (the gen_ai.* attributes) for recording model calls, token counts and tool invocations as normal traces.",
+      why: "Puts agent traces in the same backend as the rest of your system. Still marked Development status, so expect attribute churn.",
+      home: "OpenTelemetry (CNCF)",
+    },
   ],
 
   decisionMatrix: [
