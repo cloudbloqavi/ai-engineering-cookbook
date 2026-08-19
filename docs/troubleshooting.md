@@ -29,8 +29,15 @@ export PATH="$(uv tool dir):$PATH"
 On Windows (PowerShell):
 
 ```powershell
+# Fix for the current terminal session only
 $env:PATH = "$(uv tool dir);" + $env:PATH
+
+# Make it permanent for your user account, so you do not repeat this every session
+[System.Environment]::SetEnvironmentVariable("PATH", $env:PATH + ";" + (uv tool dir), "User")
 ```
+
+> [!IMPORTANT]
+> The permanent Windows setting is only read when a terminal starts. Close the terminal and open a new one, then run `specify --version` again.
 
 **Prevention:** After any `uv tool install`, run `uv tool dir` and confirm it's in your PATH.
 
@@ -45,8 +52,11 @@ $env:PATH = "$(uv tool dir);" + $env:PATH
 **Fix:**
 
 ```bash
-# macOS / Linux — reload the profile
-source ~/.bashrc   # or source ~/.zshrc
+# macOS — the default shell is zsh
+source ~/.zshrc
+
+# Linux — most distributions default to bash
+source ~/.bashrc
 
 # Windows — close and reopen the terminal, or run:
 $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("PATH","User")
@@ -254,10 +264,17 @@ Add tests for the uncovered lines before committing.
 - Use a simple local server instead of opening the file directly:
 
   ```bash
-  # Python
+  # macOS / Linux
+  python3 -m http.server 8080
+
+  # Windows (PowerShell)
   python -m http.server 8080
+
   # Then open http://localhost:8080/design/cookbook-explorer.html
   ```
+
+  > [!NOTE]
+  > On macOS and most Linux distributions the command is `python3`, because plain `python` may be missing or point to Python 2. On Windows the command is `python`.
 
 - Or use the [hosted GitHub Pages version](https://cloudbloqavi.github.io/ai-engineering-cookbook/design/cookbook-explorer.html).
 

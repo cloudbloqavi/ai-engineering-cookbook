@@ -11,9 +11,19 @@ An interactive, single-page visual companion to this cookbook. Surfaces the two-
 
 ## How to view
 
+Open the bundle with your system's default browser. The command differs per platform:
+
 ```bash
-# Just open the bundle
+# macOS
 open design/cookbook-explorer.html
+
+# Linux
+xdg-open design/cookbook-explorer.html
+```
+
+```powershell
+# Windows (PowerShell) — note the backslashes in Windows paths
+Invoke-Item design\cookbook-explorer.html
 ```
 
 ## How to publish on GitHub Pages

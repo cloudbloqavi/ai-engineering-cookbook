@@ -31,16 +31,25 @@ const OUT_HTML = path.join(DESIGN_DIR, "cookbook-explorer.html");
 const SCRIPT_TAG_RE =
   /<script type="text\/babel" src="([^"]+\.jsx)"><\/script>/g;
 
-function build() {
-  if (!fs.existsSync(HOST_HTML)) {
-    throw new Error(`host page missing: ${HOST_HTML}`);
+/**
+ * Inline every `<script type="text/babel" src="*.jsx">` tag of a host page.
+ *
+ * @param {string} [hostHtml] Absolute path to the host page. Defaults to the
+ *   repo's own explorer source, so callers (and the CLI) need no arguments.
+ * @param {string} [srcDir] Directory the `src="..."` names resolve against.
+ *   Defaults to the directory holding `hostHtml`.
+ * @returns {string} The bundled HTML, always ending in exactly one newline.
+ */
+function build(hostHtml = HOST_HTML, srcDir = path.dirname(hostHtml)) {
+  if (!fs.existsSync(hostHtml)) {
+    throw new Error(`host page missing: ${hostHtml}`);
   }
 
   let inlinedCount = 0;
-  const html = fs.readFileSync(HOST_HTML, "utf8").replace(
+  const html = fs.readFileSync(hostHtml, "utf8").replace(
     SCRIPT_TAG_RE,
     (_match, jsxName) => {
-      const jsxPath = path.join(SRC_DIR, jsxName);
+      const jsxPath = path.join(srcDir, jsxName);
       if (!fs.existsSync(jsxPath)) {
         throw new Error(`referenced source missing: ${jsxPath}`);
       }
@@ -92,4 +101,10 @@ function main() {
   );
 }
 
-main();
+// Only run the CLI when invoked directly, so unit tests can `require()` this
+// file and exercise `build()` against fixtures without writing the bundle.
+if (require.main === module) {
+  main();
+}
+
+module.exports = { build, HOST_HTML, SRC_DIR, OUT_HTML };

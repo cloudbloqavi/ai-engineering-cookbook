@@ -475,6 +475,65 @@ function Colophon() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────
+// SECTION IX — The 2026 Stack
+// ─────────────────────────────────────────────────────────────────────────
+
+function Stack2026Section() {
+  return (
+    <section style={ckStyles.section}>
+      <SectionHeader
+        no="09"
+        kicker="The 2026 Stack"
+        title={<>Five layers of <em className="display-italic" style={{ color: "var(--accent)" }}>interop</em>.</>}
+        lede="The formats and protocols agents now share across vendors. Write to these once and every tool in the chain — editor, CLI, CI runner — reads the same instructions."
+      />
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 12 }}>
+        {COOKBOOK.stack2026.map((s, i) => (
+          <div
+            key={s.layer}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              padding: "20px 22px 18px",
+              background: "var(--bg-card)",
+              border: "1px solid var(--rule)",
+              borderTop: "2px solid var(--ink)",
+            }}
+          >
+            <div className="mono" style={{ fontSize: 10, color: "var(--accent)", marginBottom: 8 }}>
+              LAYER {String(i + 1).padStart(2, "0")}
+            </div>
+
+            <div className="mono" style={{ fontSize: 20, fontWeight: 600, color: "var(--ink)", lineHeight: 1.1, marginBottom: 12 }}>
+              {s.layer}
+            </div>
+
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 14 }}>
+              <Pill color="var(--ink)" border="var(--ink)">{s.scope}</Pill>
+              <Pill color="var(--muted)" border="var(--rule)">{s.load}</Pill>
+            </div>
+
+            <p style={{ margin: "0 0 12px", fontSize: 13.5, lineHeight: 1.55, color: "var(--ink-2)" }}>
+              {s.what}
+            </p>
+
+            <div style={{ padding: "12px 14px", background: "var(--bg-soft)", borderLeft: "2px solid var(--accent)", marginBottom: 14 }}>
+              <div className="eyebrow" style={{ marginBottom: 6 }}>Why it matters</div>
+              <p style={{ margin: 0, fontSize: 13, lineHeight: 1.55, color: "var(--ink)" }}>{s.why}</p>
+            </div>
+
+            <div className="mono" style={{ marginTop: "auto", paddingTop: 10, borderTop: "1px solid var(--rule)", fontSize: 10, lineHeight: 1.5, color: "var(--muted)" }}>
+              <span style={{ color: "var(--accent)" }}>home:</span> {s.home}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────
 // APP
 // ─────────────────────────────────────────────────────────────────────────
 
@@ -524,6 +583,7 @@ function App() {
       <GatesSection />
       <ExtensionsSection />
       <FlywheelSection />
+      <Stack2026Section />
       <Colophon />
 
       <TweaksPanel title="Tweaks">

@@ -91,7 +91,13 @@ Open `.claude/hooks/prompt-optimizer-gate.js` and edit `MIN_LENGTH` (default `30
 ### Uninstall
 
 ```bash
+# macOS / Linux
 rm -rf .claude/skills/prompt-optimizer .claude/hooks/prompt-optimizer-gate.js .claude/state/prompt-optimizer
+```
+
+```powershell
+# Windows (PowerShell) — Windows paths use backslashes
+Remove-Item -Recurse -Force .claude\skills\prompt-optimizer, .claude\hooks\prompt-optimizer-gate.js, .claude\state\prompt-optimizer
 ```
 
 Remove the `UserPromptSubmit` entry from `.claude/settings.json`.

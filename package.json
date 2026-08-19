@@ -9,6 +9,7 @@
     "install-doc-coherence": "./bin/install-doc-coherence.js"
   },
   "scripts": {
+    "test": "node --test",
     "lint:docs": "node scripts/check-doc-coherence.js",
     "build:explorer": "node scripts/build-explorer.js",
     "check:explorer": "node scripts/build-explorer.js --check"

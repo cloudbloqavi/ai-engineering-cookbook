@@ -324,9 +324,9 @@ DIRECTIVE 5 — BLAMELESS LEARNING (when errors or failures occur)
 | Runtime | N/A — static documentation site (Markdown + pre-bundled HTML) |
 | Framework | N/A — pure Markdown; interactive explorer is pre-built React HTML |
 | Database | N/A |
-| Test runner | `markdownlint` (lint) · `markdown-link-check` (broken links) · `cspell` (spell check) |
-| CI command | `markdownlint "**/*.md" --ignore node_modules` |
-| Coverage floor | N/A |
+| Test runner | `node --test` (`npm test`, built into Node — no deps) for `scripts/` · `markdownlint` (lint) · `markdown-link-check` (broken links) · `cspell` (spell check) |
+| CI command | `npm test && markdownlint "**/*.md" --ignore node_modules` |
+| Coverage floor | N/A for docs. Every script in `scripts/` that a CI job depends on must have a test file in `test/`. |
 | Protected paths | `design/cookbook-explorer.html` (generated bundle — do not hand-edit; rebuild from `design/src/` via `npm run build:explorer`) |
 | New dep policy | Open a PR describing the dependency and its purpose; maintainer approval required |
 | Branch pattern | `<type>/<kebab-slug>` (e.g. `improvements/cookbook-review`, `docs/add-faq`, `fix/broken-links`) |

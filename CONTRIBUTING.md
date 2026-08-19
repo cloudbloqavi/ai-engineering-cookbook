@@ -102,6 +102,7 @@ See `design/README.md` for full instructions on editing source files and regener
 
 Before opening a PR, confirm all items:
 
+- [ ] `npm test` passes (runs the unit tests for the scripts in `scripts/` — needs Node 20 or newer; no install step required)
 - [ ] Spell-checked (no obvious typos)
 - [ ] All links work (internal and external)
 - [ ] Tone is consistent with the rest of the guide (direct, plain English, no fluff)
@@ -110,6 +111,12 @@ Before opening a PR, confirm all items:
 - [ ] No `<!-- placeholder -->` text left in files
 - [ ] New file is linked from its parent document (e.g. a new guide is in the README table)
 - [ ] If adding an example, the scenario has been manually validated as plausible
+
+---
+
+## Licensing of Contributions
+
+This project is released under the [MIT License](./LICENSE). By opening a pull request you agree that your contribution is licensed under those same terms. There is no separate CLA to sign.
 
 ---
 
