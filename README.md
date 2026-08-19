@@ -22,9 +22,9 @@ This cookbook gives you the workflow, tools, and guardrails to do that safely an
 
 The AI Engineering Cookbook is accompanied by a modern, interactive web application that provides a comprehensive visual walkthrough of the entire agentic SDLC workflow, agent profiles, verification gates, and community extensions.
 
-👉 **[Explore the Interactive Cookbook Explorer](https://cloudbloqavi.github.io/ai-engineering-cookbook/design/cookbook-explorer.html)** (hosted on GitHub Pages, or view the [local code and guides](./design/README.md))
+👉 **[Explore the Interactive Cookbook Explorer](https://exponen-agi.github.io/ai-engineering-cookbook/design/cookbook-explorer.html)** (hosted on GitHub Pages, or view the [local code and guides](./design/README.md))
 
-[![Cookbook Explorer Preview](./design/explorer_preview.png)](https://cloudbloqavi.github.io/ai-engineering-cookbook/design/cookbook-explorer.html)
+[![Cookbook Explorer Preview](./design/explorer_preview.png)](https://exponen-agi.github.io/ai-engineering-cookbook/design/cookbook-explorer.html)
 
 ---
 
@@ -109,7 +109,7 @@ Install the package locally to your target project. This ensures npm correctly c
 npm install --save-dev ai-engineering-cookbook
 
 # OR from GitHub directly:
-npm install --save-dev github:cloudbloqavi/ai-engineering-cookbook
+npm install --save-dev github:exponen-agi/ai-engineering-cookbook
 
 # Run the skill installer:
 npx ai-engineering-cookbook doc-coherence
@@ -124,7 +124,7 @@ Install the CLI tool globally on your system:
 npm install -g ai-engineering-cookbook
 
 # OR from GitHub directly:
-npm install -g github:cloudbloqavi/ai-engineering-cookbook
+npm install -g github:exponen-agi/ai-engineering-cookbook
 
 # Run the installer commands:
 ai-engineering-cookbook doc-coherence
@@ -139,7 +139,7 @@ ai-engineering-cookbook prompt-optimizer
 
 | Guide | Description | Key Focus |
 | :--- | :--- | :--- |
-| **🎨 [Cookbook Explorer](https://cloudbloqavi.github.io/ai-engineering-cookbook/design/cookbook-explorer.html) ([Local](./design/README.md))** | Interactive visual companion to explore the cookbook. | Interactive SDLC, agents, verification gates, and extensions |
+| **🎨 [Cookbook Explorer](https://exponen-agi.github.io/ai-engineering-cookbook/design/cookbook-explorer.html) ([Local](./design/README.md))** | Interactive visual companion to explore the cookbook. | Interactive SDLC, agents, verification gates, and extensions |
 | **🚀 [Quickstart Guide](./QUICKSTART.md)** | Start here! Launch your first AI-native feature in 5 minutes. | CLI cheatsheet, 3-step setup |
 | **📦 [Installation & Setup](./docs/installation.md)** | Prerequisites and global configuration steps. | uv, specify-cli, plugins |
 | **🌱 [Greenfield Workflows](./docs/greenfield.md)** | Building new features and applications from scratch. | Next.js Expense Tracker example |

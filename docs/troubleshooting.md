@@ -2,7 +2,7 @@
 
 Common failure scenarios and their fixes. If you're stuck, check here first before opening an issue.
 
-For bugs not covered here, [open a GitHub issue](https://github.com/cloudbloqavi/ai-engineering-cookbook/issues) with your OS, agent version, and the exact error message.
+For bugs not covered here, [open a GitHub issue](https://github.com/exponen-agi/ai-engineering-cookbook/issues) with your OS, agent version, and the exact error message.
 
 ---
 
@@ -276,7 +276,7 @@ Add tests for the uncovered lines before committing.
   > [!NOTE]
   > On macOS and most Linux distributions the command is `python3`, because plain `python` may be missing or point to Python 2. On Windows the command is `python`.
 
-- Or use the [hosted GitHub Pages version](https://cloudbloqavi.github.io/ai-engineering-cookbook/design/cookbook-explorer.html).
+- Or use the [hosted GitHub Pages version](https://exponen-agi.github.io/ai-engineering-cookbook/design/cookbook-explorer.html).
 
 ---
 

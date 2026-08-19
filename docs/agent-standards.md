@@ -252,7 +252,7 @@ An MCP server is code that your agent can call. Treat it the way you would treat
 
 ## 🎨 See it visually
 
-The [Interactive Cookbook Explorer](https://cloudbloqavi.github.io/ai-engineering-cookbook/design/cookbook-explorer.html) renders these layers side by side in **The 2026 Stack** section, together with the evaluation and observability layers from the next guide.
+The [Interactive Cookbook Explorer](https://exponen-agi.github.io/ai-engineering-cookbook/design/cookbook-explorer.html) renders these layers side by side in **The 2026 Stack** section, together with the evaluation and observability layers from the next guide.
 
 ---
 

@@ -8,7 +8,7 @@ const COOKBOOK = {
     title: "AI Engineering",
     titleItalic: "Cookbook",
     subtitle: "Practical patterns for building software autonomously with AI agents.",
-    repo: "cloudbloqavi/ai-engineering-cookbook",
+    repo: "exponen-agi/ai-engineering-cookbook",
     edition: "Edition 2026.08",
   },
 

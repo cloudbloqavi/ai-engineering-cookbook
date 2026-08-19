@@ -106,7 +106,9 @@
     "semconv",
     "rubric",
     "goose",
-    "Antigravity"
+    "Antigravity",
+    "exponen",
+    "agi"
   ],
   "ignorePaths": [
     "node_modules",

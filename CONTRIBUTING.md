@@ -19,7 +19,7 @@ Thank you for wanting to improve the AI Engineering Cookbook. This guide covers 
 ## Before You Start
 
 1. **Read the [Quickstart](./QUICKSTART.md)** to understand the workflow this cookbook teaches.
-2. **Check [open issues](https://github.com/cloudbloqavi/ai-engineering-cookbook/issues)** — your improvement may already be tracked.
+2. **Check [open issues](https://github.com/exponen-agi/ai-engineering-cookbook/issues)** — your improvement may already be tracked.
 3. **Check the [Glossary](./GLOSSARY.md)** if you encounter unfamiliar terms.
 
 ---

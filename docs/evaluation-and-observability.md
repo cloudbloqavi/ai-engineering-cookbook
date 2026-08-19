@@ -216,7 +216,7 @@ npx promptfoo@latest eval
 
 ## 🎨 See it visually
 
-The [Interactive Cookbook Explorer](https://cloudbloqavi.github.io/ai-engineering-cookbook/design/cookbook-explorer.html) shows the evaluation and observability layers alongside the agent standards in its **The 2026 Stack** section.
+The [Interactive Cookbook Explorer](https://exponen-agi.github.io/ai-engineering-cookbook/design/cookbook-explorer.html) shows the evaluation and observability layers alongside the agent standards in its **The 2026 Stack** section.
 
 ---
 

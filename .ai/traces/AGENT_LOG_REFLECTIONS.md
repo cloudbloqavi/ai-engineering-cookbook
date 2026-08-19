@@ -66,3 +66,14 @@ Copy this template for each new entry. Do not modify the structure.
 **Suggested refinements**: (1) Several docs still link to `github.com/cloudbloqavi/ai-engineering-cookbook` while the git remote is now `exponen-agi/ai-engineering-cookbook`; the link-check gate does not catch this because the old URL still resolves. Worth a follow-up decision on which is canonical. (2) `.github/mlc-config.json` ignores most external hosts, so a stale external link can live indefinitely — consider a periodic non-blocking job that checks the ignored hosts too. (3) Version-bearing claims (Next.js 14, Express 4.x, React 18.3.1, "December 2025", "30+ tools") are spread across docs with no owner declared in `templates/coherence.config.json`; declaring them as facts there would make drift fail CI instead of aging silently.
 
 ---
+
+## [2026-08-19] Session: canonical-repo-url-migration
+
+**Task**: Follow-up to `2026-standards-refresh`. The maintainer confirmed `exponen-agi` is the new home, resolving the open question raised in the previous entry.
+**Outcome**: COMPLETE
+**Changes made**: `README.md`, `CONTRIBUTING.md`, `package.json`, `.github/mlc-config.json`, `.github/cspell.json`, `docs/agent-standards.md`, `docs/evaluation-and-observability.md`, `docs/troubleshooting.md`, `docs/doc-coherence.md`, `docs/prompt-optimizer.md`, `design/src/cookbook-data.jsx`, `design/cookbook-explorer.html`
+**Frictions encountered**: The stale owner appeared in four distinct shapes, so a single find-and-replace was not enough: the GitHub Pages host (`cloudbloqavi.github.io`), issue-tracker URLs (`github.com/cloudbloqavi/`), npm install specifiers (`github:cloudbloqavi/`), and the explorer's `meta.repo` data field. `.github/mlc-config.json` also had to be updated in the same commit — it ignores the Pages host by pattern, so leaving the old pattern would have exposed the new URL to a live link check while silently continuing to skip the old one. `.github/CODEOWNERS` still reads `* @cloudbloqavi`, but that is a personal GitHub handle rather than a repository reference, so it was deliberately left alone.
+**Prompt clarity issues**: None. The instruction was unambiguous.
+**Suggested refinements**: The repository owner is now asserted in six files with no declared owner in `templates/coherence.config.json`. Declaring it as a fact there — owner `README.md`, marker `exponen-agi/ai-engineering-cookbook` — would make any future rename fail the doc-coherence gate instead of leaving half the docs pointing at a dead host. This is the same class of drift the previous entry flagged for version numbers.
+
+---
