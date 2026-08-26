@@ -36,10 +36,11 @@ Run these on every commit. Configure in CI; also run locally before pushing.
 | Markdown linting | `markdownlint "**/*.md" --ignore node_modules --ignore ".specify/**"` | Zero errors | Block commit |
 | Broken link check | `find . -name "*.md" \| xargs markdown-link-check --config .github/mlc-config.json` | Zero broken links | Block commit |
 | Spell check | `cspell "**/*.md" --config .github/cspell.json` | Zero unknown words | Block commit, alert user |
+| Unit tests | `npm test` | Zero failures | Block commit |
 | Secret scanning | `trufflehog filesystem . --only-verified` | Zero secrets | Block commit, alert user |
 
-**To configure for your project:** Replace the `<!-- ... -->` placeholders with your actual commands.
-These must match the `CI command` field in `CLAUDE.md §6`.
+**To configure for your project:** replace each command above with the equivalent for your stack.
+These must match the `CI command` field in `CLAUDE.md §7`.
 
 ---
 
@@ -74,6 +75,9 @@ The following conditions require a human to review before the branch proceeds:
 | Any Gate 1 check produces a warning (not just error) | Warnings become errors | Surface warning. Ask user whether to treat as blocking. |
 | Agent uncertainty on spec intent | Ambiguity produces debt | Surface the ambiguity. Do not resolve silently. |
 | Postmortem exists for this feature area | Known risk zone | Notify reviewer. They decide whether extra scrutiny is needed. |
+| A new MCP server is connected | Widens what the agent can reach and read, on every future session | Pause. Name the server and its scope. See [Agent Security](../../docs/agent-security.md). |
+| A skill written elsewhere is installed | Its instructions and scripts run with your permissions | Pause. Review `SKILL.md` and every file in `scripts/` before approving. |
+| The agent's credentials or file scope widen | Changes the blast radius of every later task | Pause. Confirm least privilege still holds. |
 
 ---
 

@@ -150,6 +150,7 @@ ai-engineering-cookbook prompt-optimizer
 | **🧭 [Context Engineering](./docs/context-engineering.md)** | The 6 Context-Engine principles mapped honestly to this repo's mechanisms. | Conflict resolution, token optimization, scope boundaries |
 | **🔌 [Agent Standards](./docs/agent-standards.md)** | The three open standards every 2026 agent reads: AGENTS.md, Agent Skills, and MCP. | Progressive disclosure, stateless MCP, per-platform config paths |
 | **📊 [Evaluation & Observability](./docs/evaluation-and-observability.md)** | Telling whether the model's output was actually good — traces vs. evals. | Golden datasets, judge calibration, OpenTelemetry GenAI |
+| **🛡️ [Agent Security](./docs/agent-security.md)** | Stopping an agent from being turned against you by the text it reads. | Prompt injection, the lethal trifecta, reviewing a skill before you install it |
 | **🔗 [Doc Coherence Skill](./docs/doc-coherence.md)** | Single-source-of-truth registry + CI gate that flags cross-doc drift. Install via [Installable Skills](#-installable-skills). | Canonical owners, authority order, deterministic gate |
 | **🔧 [Troubleshooting](./docs/troubleshooting.md)** | Common failure scenarios and step-by-step fixes. | Install errors, TDD issues, phantom completions |
 | **📖 [Glossary](./GLOSSARY.md)** | Plain-English definitions for every key term. | 30+ terms from AI Agent to Worktree |
@@ -172,8 +173,9 @@ Not sure where to begin? Follow this sequence:
 | 7 | **Want a sharper prompt** before starting work | [Prompt Optimizer Skill](./docs/prompt-optimizer.md) |
 | 8 | **Wondering how agents connect** to tools and data | [Agent Standards](./docs/agent-standards.md) |
 | 9 | **Building a feature that calls a model** and need to score it | [Evaluation & Observability](./docs/evaluation-and-observability.md) |
-| 10 | **Stuck on something** | [Troubleshooting Guide](./docs/troubleshooting.md) |
-| 11 | **Want to contribute** | [Contributing Guide](./CONTRIBUTING.md) |
+| 10 | **About to connect a tool or install a skill** you did not write | [Agent Security](./docs/agent-security.md) |
+| 11 | **Stuck on something** | [Troubleshooting Guide](./docs/troubleshooting.md) |
+| 12 | **Want to contribute** | [Contributing Guide](./CONTRIBUTING.md) |
 
 ---
 

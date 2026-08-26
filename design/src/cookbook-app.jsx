@@ -484,7 +484,7 @@ function Stack2026Section() {
       <SectionHeader
         no="09"
         kicker="The 2026 Stack"
-        title={<>Five layers of <em className="display-italic" style={{ color: "var(--accent)" }}>interop</em>.</>}
+        title={<>Six layers of <em className="display-italic" style={{ color: "var(--accent)" }}>interop</em>.</>}
         lede="The formats and protocols agents now share across vendors. Write to these once and every tool in the chain — editor, CLI, CI runner — reads the same instructions."
       />
 

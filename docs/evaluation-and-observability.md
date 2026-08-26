@@ -67,10 +67,30 @@ From this you can answer: where did the time go, where did the money go, which t
 | `gen_ai.usage.output_tokens` | Tokens returned |
 | `gen_ai.tool.name` | Which tool the agent invoked |
 
+There are also agreed **span names**, which is what makes one agent run readable as a tree:
+
+```text
+invoke_agent   "add pagination to the users endpoint"
+├── chat           ← one span per model call
+├── execute_tool   ← one span per tool call
+├── chat
+└── execute_tool
+```
+
 The practical benefit is that your agent traces land in the **same** backend as the rest of your system's traces, so one dashboard covers everything.
 
 > [!WARNING]
-> **These conventions are not stable yet.** As of mid-2026 the `gen_ai.*` attributes are still marked **Development** in the OpenTelemetry registry, not Stable. Blog posts claiming they "went stable" are wrong. Adopt them — they are clearly where the industry is heading — but expect attribute names to change, and do not hard-code them in a hundred places. Wrap them in one helper module you can update once.
+> **These conventions are not stable yet, and they moved house in 2026.** Two things to know:
+>
+> 1. Every `gen_ai.*` attribute, span and metric is still marked **Development** — none is Stable. Blog posts claiming they "went stable" are wrong.
+> 2. With semantic-conventions **v1.42.0 (12 June 2026)** the GenAI conventions — along with the MCP conventions — were deprecated in the main OpenTelemetry repository and moved to a dedicated one, `open-telemetry/semantic-conventions-genai`, so they can release on their own cadence. That is an organisational split, **not** a promotion to stable, and at the time of writing that repository has no tagged release to pin against.
+>
+> Adopt them — they are clearly where the industry is heading — but expect names to change, and do not hard-code them in a hundred places. Wrap them in one helper module you can update once.
+
+There is also one privacy trap worth knowing about before you turn everything on.
+
+> [!CAUTION]
+> Two optional attributes, `gen_ai.tool.call.arguments` and `gen_ai.tool.call.result`, record the full input and output of every tool call. That is enormously useful for debugging and is also the fastest way to write your customers' data — or your own API keys — into a trace backend. Enable them deliberately, name them one by one, and never with a `gen_ai.*` wildcard.
 
 ---
 
@@ -147,9 +167,18 @@ You do not need all of these. Pick one from each column.
 
 | Need | Common open-source options | Notes |
 | :--- | :--- | :--- |
-| Traces + cost dashboard | **Langfuse**, **Arize Phoenix** | Both self-hostable. Langfuse is the usual default for a team that wants to run its own. |
-| Evals in CI | **promptfoo**, **DeepEval** | promptfoo is config-file driven and slots into a CI job easily. DeepEval follows a pytest-style API. |
+| Traces + cost dashboard | **Langfuse**, **Arize Phoenix** | Both self-hostable. Langfuse is the usual default for a team that wants to run its own; Phoenix is built directly on OpenTelemetry. |
+| Evals in CI | **promptfoo**, **DeepEval** | promptfoo is config-file driven and slots into a CI job easily; it also does red-teaming. DeepEval follows a pytest-style API, so it feels like your existing test suite. |
 | One API across model providers | **LiteLLM** | A gateway that also gives you per-key cost tracking. Useful even if you only use one provider today. |
+
+> [!NOTE]
+> **Both leaders were acquired in 2026** — Langfuse by ClickHouse in January, promptfoo by OpenAI in March. Both acquirers stated the projects stay open source under their current licences. Nothing to do today, but if you are picking a tool to build a CI gate on, know that this layer is consolidating, and prefer the one whose *self-hosted* path you have actually run.
+
+### A gap worth knowing about
+
+Surveys of teams running agents in production keep finding the same imbalance: **most have tracing, far fewer run evals.** Tracing is easy to adopt — you add an SDK and dashboards appear. Evals require you to decide what "good" means and write it down, which is real work.
+
+That is exactly why the loop at the top of this guide matters. If you only ever build the observability half, you will see every failure clearly and still have no mechanism that stops it happening again.
 
 > [!NOTE]
 > **New dependency policy.** Per [CLAUDE.md §7](../CLAUDE.md), adding any of these to a project governed by this cookbook requires a PR describing the dependency and its purpose, with maintainer approval. Do not install one mid-task.
