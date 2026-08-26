@@ -1,0 +1,38 @@
+# Normalise line endings across macOS, Windows and Linux.
+#
+# Why this file exists: `scripts/build-explorer.js` writes
+# `design/cookbook-explorer.html` byte-for-byte, and CI proves the committed
+# bundle matches by running the build and then `git diff --exit-code`. Without
+# this file, a Windows checkout converts LF to CRLF on the way in, the rebuild
+# writes LF, and the drift gate fails for a reason that has nothing to do with
+# the change under review.
+#
+# `docs/evaluation-and-observability.md` recommends exactly this to readers, so
+# the cookbook now practises it too.
+
+# Everything Git detects as text is stored and checked out with LF.
+* text=auto eol=lf
+
+# Be explicit for the file types this repo actually ships, so no heuristic is
+# involved.
+*.md      text eol=lf
+*.js      text eol=lf
+*.jsx     text eol=lf
+*.json    text eol=lf
+*.yml     text eol=lf
+*.yaml    text eol=lf
+*.html    text eol=lf
+*.txt     text eol=lf
+LICENSE   text eol=lf
+
+# Binary files must never be touched.
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.gif     binary
+*.ico     binary
+*.pdf     binary
+
+# Keep generated bundles out of PR diffs by default. Reviewers read
+# `design/src/`; the bundle is verified mechanically by the build-explorer job.
+design/cookbook-explorer.html linguist-generated=true

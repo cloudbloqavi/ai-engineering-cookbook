@@ -37,23 +37,35 @@ jobs:
             | xargs -I {} markdown-link-check {} \
               --config .github/mlc-config.json
 
+  # The installers ship to macOS, Windows and Linux, and the docs give
+  # per-platform commands. Prove the suite passes on all three rather than
+  # assuming Linux behaviour generalises.
   unit-tests:
-    name: Unit Tests
-    runs-on: ubuntu-latest
+    name: Unit Tests (${{ matrix.os }}, Node ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: ["20", "22"]
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: ${{ matrix.node }}
 
       # No dependencies to install — the suite uses node:test, built into Node.
       - name: Run the test suite
         run: npm test
 
   build-explorer:
-    name: Build Explorer
-    runs-on: ubuntu-latest
+    name: Build Explorer (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     steps:
       - uses: actions/checkout@v4
 
@@ -64,7 +76,11 @@ jobs:
       - name: Rebuild the explorer bundle from design/src
         run: npm run build:explorer
 
+      # Runs on Windows too: the build must be byte-identical there, which is
+      # what `.gitattributes` (eol=lf) guarantees. If someone removes it, this
+      # job is what catches the regression.
       - name: Fail if the committed bundle is out of date
+        shell: bash
         run: |
           if ! git diff --exit-code -- design/cookbook-explorer.html; then
             echo "::error::design/cookbook-explorer.html is stale. Run 'npm run build:explorer' and commit the result."
