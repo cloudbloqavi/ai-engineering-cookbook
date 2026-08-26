@@ -154,26 +154,35 @@ function promptUser() {
 }
 
 // Main execution
-const args = process.argv.slice(2);
-const cmd = args[0];
+function main(args = process.argv.slice(2)) {
+  const cmd = args[0];
 
-if (!cmd) {
-  if (process.stdin.isTTY) {
-    promptUser();
-  } else {
+  if (!cmd) {
+    if (process.stdin.isTTY) {
+      promptUser();
+    } else {
+      showHelp();
+      process.exit(0);
+    }
+  } else if (cmd === 'help' || cmd === '-h' || cmd === '--help') {
     showHelp();
     process.exit(0);
+  } else if (subcommands[cmd]) {
+    const rest = args.slice(1);
+    const fullPath = path.resolve(__dirname, subcommands[cmd]);
+    const child = fork(fullPath, rest, { stdio: 'inherit' });
+    child.on('close', (code) => process.exit(code ?? 0));
+  } else {
+    process.stderr.write(`\x1b[31mUnknown command:\x1b[0m "${cmd}"\n\n`);
+    showHelp();
+    process.exit(1);
   }
-} else if (cmd === 'help' || cmd === '-h' || cmd === '--help') {
-  showHelp();
-  process.exit(0);
-} else if (subcommands[cmd]) {
-  const rest = args.slice(1);
-  const fullPath = path.resolve(__dirname, subcommands[cmd]);
-  const child = fork(fullPath, rest, { stdio: 'inherit' });
-  child.on('close', (code) => process.exit(code ?? 0));
-} else {
-  process.stderr.write(`\x1b[31mUnknown command:\x1b[0m "${cmd}"\n\n`);
-  showHelp();
-  process.exit(1);
 }
+
+// Only run when invoked as a program, so `require('./cli.js')` in a test can
+// import the pure helpers without the CLI executing or calling process.exit.
+if (require.main === module) {
+  main();
+}
+
+module.exports = { ENVIRONMENTS, subcommands, parseSelection, showHelp, main };

@@ -1,0 +1,211 @@
+/**
+ * Unit tests for bin/cli.js — the `npx ai-engineering-cookbook` entry point.
+ *
+ * This is the surface every reader touches first, and until now it had no
+ * tests. Two things are pinned here:
+ *
+ *   1. `parseSelection`, the multi-select parser behind the interactive picker.
+ *      It is pure, so it is tested directly.
+ *   2. The router contract: every environment the CLI advertises must actually
+ *      be accepted by both installers. These run the real binaries in
+ *      `--dry-run` mode, so nothing is written to disk.
+ *
+ * Everything here is cross-platform. Child processes are spawned via
+ * `process.execPath` (never a shell), and paths are built with `path.join`, so
+ * the suite behaves the same on macOS, Windows and Linux.
+ *
+ * Run: npm test   (uses node:test, built into Node; no dependencies)
+ */
+
+const test = require("node:test");
+const assert = require("node:assert/strict");
+const path = require("node:path");
+const fs = require("node:fs");
+const os = require("node:os");
+const { spawnSync } = require("node:child_process");
+
+const CLI_PATH = path.join(__dirname, "..", "bin", "cli.js");
+const { ENVIRONMENTS, subcommands, parseSelection } = require(CLI_PATH);
+
+/** Run the CLI (or any script) with Node directly — no shell, so Windows is fine. */
+function run(scriptPath, args = []) {
+  return spawnSync(process.execPath, [scriptPath, ...args], {
+    encoding: "utf8",
+    // The CLI shows an interactive picker only when stdin is a TTY. Piping
+    // stdin keeps every test on the non-interactive path.
+    stdio: ["pipe", "pipe", "pipe"],
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// parseSelection — the interactive multi-select parser
+// ─────────────────────────────────────────────────────────────────────────
+
+test("parseSelection defaults to the first entry when input is empty", () => {
+  assert.deepEqual(parseSelection("", 7), [1]);
+  assert.deepEqual(parseSelection("   ", 7), [1]);
+});
+
+test("parseSelection accepts a single number", () => {
+  assert.deepEqual(parseSelection("3", 7), [3]);
+});
+
+test("parseSelection accepts comma- and space-separated numbers", () => {
+  assert.deepEqual(parseSelection("1,3 5", 7), [1, 3, 5]);
+  assert.deepEqual(parseSelection("2, 4,6", 7), [2, 4, 6]);
+});
+
+test("parseSelection preserves the order the user typed", () => {
+  assert.deepEqual(parseSelection("5,1,3", 7), [5, 1, 3]);
+});
+
+test("parseSelection removes duplicates", () => {
+  assert.deepEqual(parseSelection("2,2,2", 7), [2]);
+  assert.deepEqual(parseSelection("1,2,1", 7), [1, 2]);
+});
+
+test("parseSelection rejects out-of-range numbers", () => {
+  assert.equal(parseSelection("0", 7), null);
+  assert.equal(parseSelection("8", 7), null);
+  assert.equal(parseSelection("-1", 7), null);
+});
+
+test("parseSelection rejects non-integers and junk", () => {
+  assert.equal(parseSelection("abc", 7), null);
+  assert.equal(parseSelection("1.5", 7), null);
+  assert.equal(parseSelection("1,abc", 7), null);
+});
+
+// ─────────────────────────────────────────────────────────────────────────
+// The environment table
+// ─────────────────────────────────────────────────────────────────────────
+
+test("every advertised environment has a tool, a label and a skills folder", () => {
+  assert.ok(ENVIRONMENTS.length > 0, "the picker must offer at least one environment");
+  for (const env of ENVIRONMENTS) {
+    assert.equal(typeof env.tool, "string", `${env.label} needs a tool id`);
+    assert.ok(env.tool.length > 0);
+    assert.equal(typeof env.label, "string");
+    assert.ok(env.label.length > 0);
+    // Always forward slashes — these strings are printed to users and passed
+    // to the installers, which normalise them per platform.
+    assert.match(env.dir, /^\.[\w.-]+\/skills$/, `${env.tool} has an unexpected dir: ${env.dir}`);
+  }
+});
+
+test("environment tool ids are unique", () => {
+  const ids = ENVIRONMENTS.map((e) => e.tool);
+  assert.equal(new Set(ids).size, ids.length, "duplicate tool id in ENVIRONMENTS");
+});
+
+test("every subcommand points at an installer that exists on disk", () => {
+  for (const [name, relPath] of Object.entries(subcommands)) {
+    const full = path.resolve(path.dirname(CLI_PATH), relPath);
+    assert.ok(fs.existsSync(full), `subcommand "${name}" points at a missing file: ${relPath}`);
+  }
+});
+
+test("both skills are reachable under their short and their install- name", () => {
+  for (const skill of ["doc-coherence", "prompt-optimizer"]) {
+    assert.ok(subcommands[skill], `missing short alias for ${skill}`);
+    assert.ok(subcommands[`install-${skill}`], `missing install- alias for ${skill}`);
+    assert.equal(subcommands[skill], subcommands[`install-${skill}`], `aliases for ${skill} disagree`);
+  }
+});
+
+// ─────────────────────────────────────────────────────────────────────────
+// Router behaviour
+// ─────────────────────────────────────────────────────────────────────────
+
+test("--help exits 0 and lists both skills", () => {
+  const res = run(CLI_PATH, ["--help"]);
+  assert.equal(res.status, 0);
+  assert.match(res.stdout, /doc-coherence/);
+  assert.match(res.stdout, /prompt-optimizer/);
+});
+
+test("help, -h and --help all behave the same", () => {
+  const outputs = ["help", "-h", "--help"].map((flag) => run(CLI_PATH, [flag]));
+  for (const res of outputs) {
+    assert.equal(res.status, 0);
+  }
+  assert.equal(outputs[0].stdout, outputs[1].stdout);
+  assert.equal(outputs[1].stdout, outputs[2].stdout);
+});
+
+test("no arguments and no TTY prints help and exits 0 instead of hanging", () => {
+  const res = run(CLI_PATH, []);
+  assert.equal(res.status, 0);
+  assert.match(res.stdout, /Usage:/);
+});
+
+test("an unknown command exits 1 and names the offending command", () => {
+  const res = run(CLI_PATH, ["not-a-real-skill"]);
+  assert.equal(res.status, 1);
+  assert.match(res.stderr, /not-a-real-skill/);
+});
+
+test("the help text mentions every environment the picker offers", () => {
+  const res = run(CLI_PATH, ["--help"]);
+  for (const env of ENVIRONMENTS) {
+    assert.match(res.stdout, new RegExp(env.tool), `help text never mentions "${env.tool}"`);
+  }
+});
+
+// ─────────────────────────────────────────────────────────────────────────
+// The router / installer contract
+//
+// This is the test that earns its keep: if someone adds an environment to the
+// CLI picker but forgets to teach an installer about it, the user gets a
+// confusing failure halfway through an install. These catch it in CI instead.
+// ─────────────────────────────────────────────────────────────────────────
+
+for (const [skill, relPath] of Object.entries(subcommands)) {
+  // The short and install- aliases resolve to the same script; test it once.
+  if (skill.startsWith("install-")) continue;
+
+  for (const env of ENVIRONMENTS) {
+    test(`${skill} accepts --tool ${env.tool} (dry run, writes nothing)`, () => {
+      const installer = path.resolve(path.dirname(CLI_PATH), relPath);
+      const res = run(installer, ["--tool", env.tool, "--dry-run"]);
+      assert.equal(
+        res.status,
+        0,
+        `${skill} rejected "${env.tool}".\nstdout: ${res.stdout}\nstderr: ${res.stderr}`
+      );
+    });
+  }
+
+  test(`${skill} rejects an unknown --tool with a non-zero exit`, () => {
+    const installer = path.resolve(path.dirname(CLI_PATH), relPath);
+    const res = run(installer, ["--tool", "definitely-not-a-tool", "--dry-run"]);
+    assert.notEqual(res.status, 0, `${skill} silently accepted an unknown tool`);
+  });
+}
+
+test("a dry run writes nothing into the working directory", () => {
+  // Guards against a future --dry-run regression that starts creating files.
+  // Runs in a throwaway directory so the assertion is exact: the folder starts
+  // empty, so anything left behind came from the installer.
+  const scratch = fs.mkdtempSync(path.join(os.tmpdir(), "cookbook-dryrun-"));
+  test.after(() => fs.rmSync(scratch, { recursive: true, force: true }));
+
+  for (const [skill, relPath] of Object.entries(subcommands)) {
+    if (skill.startsWith("install-")) continue;
+    const installer = path.resolve(path.dirname(CLI_PATH), relPath);
+
+    for (const env of ENVIRONMENTS) {
+      const res = spawnSync(
+        process.execPath,
+        [installer, "--tool", env.tool, "--dry-run"],
+        { encoding: "utf8", cwd: scratch, stdio: ["pipe", "pipe", "pipe"] }
+      );
+      assert.equal(res.status, 0, `${skill} --tool ${env.tool} failed: ${res.stderr}`);
+      assert.deepEqual(
+        fs.readdirSync(scratch),
+        [],
+        `${skill} --tool ${env.tool} wrote to disk during a dry run`
+      );
+    }
+  }
+});
