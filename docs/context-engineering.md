@@ -56,6 +56,56 @@ The point is not to ban a topic from appearing in two docs — it's to ban two d
 
 ---
 
+## 🔄 What the community changed its mind about in 2026
+
+Three practices that were standard advice a year ago are now actively argued against. All three are token-budget problems, which is why they belong in this guide.
+
+### 1. Search the code, don't embed it
+
+The old default was to chunk a repository, turn each chunk into a vector, and retrieve by similarity. Coding agents have largely abandoned this. Anthropic removed vector search from Claude Code in favour of plain `grep`-style tool calls, and Cursor, Windsurf, Cline, Devin and Sourcegraph Amp moved the same way.
+
+The reasons are practical rather than ideological:
+
+| Problem with an index | Why plain search wins for code |
+| :--- | :--- |
+| It goes stale the moment someone edits a file | Search always reads the file as it is right now |
+| Similarity returns "things that look related" | An exact symbol match is exactly what you asked for |
+| You must build, host and refresh the index | There is nothing to maintain |
+| Chunks must be sent somewhere to be embedded | Nothing leaves the machine |
+
+An Amazon Science paper at AAAI 2026 measured agentic keyword search reaching roughly **94.5% of RAG's faithfulness with no vector store at all**.
+
+> [!NOTE]
+> This is about **code**, not about everything. Exact-match search wins on identifiers, file paths and symbols because code has precise names. For messy prose — support tickets, policy documents, chat history — semantic retrieval still earns its place. The 2026 answer is usually hybrid, not "RAG is dead".
+
+This is already the rule in [CLAUDE.md §T](../CLAUDE.md): *grep first, then read the match ±20 lines.* It is worth knowing that this is not just a house style — it is where the wider ecosystem landed.
+
+### 2. Don't load every tool you own
+
+Connecting many MCP servers looks free. It is not: every tool definition sits in the context window on **every** request, before the user has typed anything. A handful of busy servers can consume a large fraction of the window as fixed overhead, and a bigger tool catalogue also makes the model *worse* at choosing among them.
+
+The fixes now shipping across the ecosystem all reduce what is resident:
+
+```text
+LOAD EVERYTHING                       LOAD ON DEMAND
+────────────────────                  ────────────────────
+all servers connected                 search the tool catalogue,
+all tool schemas resident        →    load only the matching schema
+before the first message              ─ or ─
+                                      let the agent write code that
+                                      calls the API directly
+```
+
+Same instinct as progressive disclosure for skills, applied to tools.
+
+### 3. More agents is not more capability
+
+Multi-agent "swarms" were widely recommended in 2025. In 2026 the reported results are mixed: at an equal token budget a single well-directed agent often matches or beats a swarm, coordination overhead accounts for a large share of observed failures, and running several agents in parallel costs many times the tokens.
+
+The pattern that did survive is narrower and is the one [CLAUDE.md §T](../CLAUDE.md) already describes: **one orchestrator that owns the context, spawning short-lived subagents that each return a compressed summary.** The win there is not parallelism — it is that the raw exploration output never enters the main thread's context.
+
+---
+
 ## 🚧 What's intentionally out of scope
 
 A docs-and-governance repo can enforce the corpus-coherence slice of context engineering. It cannot do the parts that require a running system with identity and live data:

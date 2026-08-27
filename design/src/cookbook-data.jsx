@@ -400,8 +400,16 @@ Constraints:
       scope: "Observability",
       load: "Emitted every run",
       what: "OpenTelemetry semantic conventions (the gen_ai.* attributes) for recording model calls, token counts and tool invocations as normal traces.",
-      why: "Puts agent traces in the same backend as the rest of your system. Still marked Development status, so expect attribute churn.",
+      why: "Puts agent traces in the same backend as the rest of your system. Still marked Development status, and split into its own repo in June 2026 — expect attribute churn.",
       home: "OpenTelemetry (CNCF)",
+    },
+    {
+      layer: "Agent Security",
+      scope: "Blast radius",
+      load: "Decided before you connect anything",
+      what: "The rules limiting what an agent can reach: tool allowlists, least-privilege credentials, sandboxed execution, and a human check before anything irreversible.",
+      why: "Prompt injection is OWASP's number one LLM risk and cannot be prompted away. Every working defence limits what the agent can do, not what it can be told.",
+      home: "OWASP LLM Top 10 · OWASP Agentic Skills Top 10",
     },
   ],
 
