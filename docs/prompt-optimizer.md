@@ -16,7 +16,7 @@ Install the skill directly in your target repository using `npx`:
 npx ai-engineering-cookbook prompt-optimizer
 ```
 
-> **💡 Note on execution:** Since this cookbook is published to npm, we use `npx ai-engineering-cookbook prompt-optimizer` as a single router entry point. This downloads and runs the installer directly without polluting your global node_modules. Requires **Node.js 18+**.
+> **💡 Note on execution:** Since this cookbook is published to npm, we use `npx ai-engineering-cookbook prompt-optimizer` as a single router entry point. This downloads and runs the installer directly without polluting your global node_modules. Requires **Node.js 22+**.
 
 ### 🛠️ Troubleshooting & Fallbacks (If npx fails)
 
@@ -184,7 +184,7 @@ For **Roo Code, VS Code Copilot, and Antigravity**, no public prompt-submit hook
 -h, --help      Show help.
 ```
 
-Requirements: **Node.js 18+** on `PATH`.
+Requirements: **Node.js 22+** on `PATH`.
 
 ---
 

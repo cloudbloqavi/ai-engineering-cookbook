@@ -12,7 +12,7 @@ Install the skill directly in your target repository using `npx`:
 npx ai-engineering-cookbook doc-coherence
 ```
 
-> **💡 Note on execution:** Since this cookbook is published to npm, we use `npx ai-engineering-cookbook doc-coherence` as a single router entry point. This downloads and runs the installer directly without polluting your global node_modules. Requires **Node.js 18+**.
+> **💡 Note on execution:** Since this cookbook is published to npm, we use `npx ai-engineering-cookbook doc-coherence` as a single router entry point. This downloads and runs the installer directly without polluting your global node_modules. Requires **Node.js 22+**.
 
 ### 🛠️ Troubleshooting & Fallbacks (If npx fails)
 
@@ -89,7 +89,7 @@ npx ai-engineering-cookbook doc-coherence \
     --tool custom --target ./my-skills
 ```
 
-Requirements: **Node.js 18+** on `PATH`. The CI gate itself (`scripts/check-doc-coherence.js`) is dependency-free Node.
+Requirements: **Node.js 22+** on `PATH`. The CI gate itself (`scripts/check-doc-coherence.js`) is dependency-free Node.
 
 ---
 

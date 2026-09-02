@@ -37,6 +37,8 @@ Run these on every commit. Configure in CI; also run locally before pushing.
 | Broken link check | `find . -name "*.md" \| xargs markdown-link-check --config .github/mlc-config.json` | Zero broken links | Block commit |
 | Spell check | `cspell "**/*.md" --config .github/cspell.json` | Zero unknown words | Block commit, alert user |
 | Unit tests | `npm test` | Zero failures | Block commit |
+| Doc coherence | `npm run lint:docs` | Zero drift violations | Block commit |
+| Toolchain consistency | `npm run check:toolchain` | Zero violations (warnings advisory) | Block commit |
 | Secret scanning | `trufflehog filesystem . --only-verified` | Zero secrets | Block commit, alert user |
 
 **To configure for your project:** replace each command above with the equivalent for your stack.
