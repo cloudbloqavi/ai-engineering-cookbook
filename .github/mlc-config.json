@@ -29,6 +29,13 @@
     },
     {
       "pattern": "^https://antigravity.google"
+    },
+    {
+      "comment": "US government hosts return 403 to automated clients; the links are valid in a browser.",
+      "pattern": "^https://media.defense.gov"
+    },
+    {
+      "pattern": "^https://www.nsa.gov"
     }
   ],
   "aliveStatusCodes": [200, 206, 429],

@@ -191,6 +191,48 @@ For you as an engineer this matters in one concrete way: these are no longer one
 
 ---
 
+## 4️⃣ A2A — the fourth standard, and why you probably do not need it yet
+
+You will see **A2A (Agent2Agent)** listed next to the three above, so it is worth knowing where it fits — and where it does not.
+
+MCP connects an agent **down** to tools and data. A2A connects an agent **across** to another *agent* that someone else owns and runs. The distinction is about who is in charge:
+
+```text
+        ┌──────────────────────────────┐
+        │        YOUR AGENT            │
+        └──────────────────────────────┘
+           │                        │
+    MCP    │ "run this tool         │  A2A   "here is a task —
+   (down)  │  and give me           │ (across) you decide how to
+           │  the result"           │          do it, tell me when
+           ▼                        ▼          it is done"
+    ┌─────────────┐          ┌──────────────────┐
+    │ A tool you  │          │ Another team's   │
+    │ control     │          │ agent — its own  │
+    │             │          │ model, prompts,  │
+    │             │          │ and deadlines    │
+    └─────────────┘          └──────────────────┘
+```
+
+A tool is predictable: you call it, it returns. Another agent is not: it reasons, it takes time, it can come back and ask you a question. A2A exists to describe that messier conversation — agents publish an **Agent Card** saying what they can do, then exchange long-running tasks.
+
+**The honest status.** A2A reached v1.0 and is governed by the Linux Foundation, with 150+ organisations signed on — AWS, Cisco, IBM, Microsoft, Salesforce, SAP, ServiceNow. That is a genuinely broad list. But it is broad in a specific direction: it is **enterprise vendors agreeing on how their products will interoperate**. Grassroots open-source adoption is thin by comparison, and nothing in a normal coding workflow needs it.
+
+| You are… | Standard you need |
+| :--- | :--- |
+| Telling one agent how to work in your repo | **AGENTS.md** |
+| Giving an agent a reusable ability | **Agent Skills** |
+| Letting an agent reach your database, API or ticket tracker | **MCP** |
+| Handing a task to an agent **another company** operates | **A2A** |
+| Splitting work between agents **you** run | None of these — see below |
+
+> [!IMPORTANT]
+> **Multiple agents in one project is not an A2A problem.** If you are running an orchestrator that spawns subagents, they share your codebase, your process and your trust boundary — a function call and a returned summary is the whole protocol you need. Reach for A2A only when the other agent is genuinely *someone else's*: different owner, different network, different trust boundary. This cookbook's [multi-agent pod](../AGENTS.md) is deliberately the first kind.
+
+The practical advice for 2026: **know the name, skip the implementation.** If your company later buys two AI products that both speak A2A, they will interoperate and you will not have to do anything. That is the entire benefit available to most teams today.
+
+---
+
 ## 🖥️ Where the config files live on each platform
 
 Agent configuration lives in different places on macOS, Windows and Linux. Use this table rather than guessing.

@@ -6,6 +6,18 @@ Plain-English definitions for every term used in this cookbook. If you encounter
 
 ---
 
+## A2A (Agent2Agent)
+
+An open standard for one agent to hand a task to *another agent* that a different organisation owns and runs. Each agent publishes an **Agent Card** describing what it can do, and they then exchange long-running tasks. Governed by the Linux Foundation.
+
+The easy way to remember the difference: **MCP** connects an agent *down* to a tool it controls, while **A2A** connects it *across* to an agent it does not control. Two agents you run yourself — an orchestrator and its subagents, for example — need neither: they share a process and a trust boundary, so a function call is enough.
+
+> **Do you need it?** Almost certainly not yet. Adoption so far is enterprise vendors agreeing on how their products interoperate. Know the name; skip the implementation.
+
+See [Agent Standards](./docs/agent-standards.md)
+
+---
+
 ## Acceptance Criteria
 
 The specific, testable conditions that prove a feature is complete. Written as "Given / When / Then" statements in `spec.md`. If you can't write an automated test for a criterion, it's not specific enough.
@@ -292,6 +304,10 @@ See [AGENTS.md](./AGENTS.md)
 ## Sandbox
 
 An isolated environment where an agent can run commands without being able to damage anything outside it — typically a container or a lightweight virtual machine with its own filesystem and no access to your credentials. If an agent is going to execute code it wrote, or code it downloaded, a sandbox is the boundary that keeps a mistake from becoming an incident.
+
+Sandboxes come in three strengths, and the right one depends on what you are protecting against: **process-level** (your agent tool's own permission prompts — fine for your own code), **container** (a Dev Container or Docker — the right default for an untrusted repo or a new MCP server), and **microVM or gVisor** (for running code the agent generated, or anything touching production data).
+
+> **Why it matters:** rules like *"this session gets no network"* are honour-system until something enforces them. Prompt injection works precisely by making an agent stop honouring your instructions, so the boundary has to sit outside the agent.
 
 See [Agent Security](./docs/agent-security.md)
 
