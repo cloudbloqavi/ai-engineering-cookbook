@@ -18,6 +18,14 @@ This cookbook gives you the workflow, tools, and guardrails to do that safely an
 
 ---
 
+## 🌐 Browse it on the web
+
+Prefer reading in a browser? The cookbook has a landing page that indexes every guide, shows the workflow as a diagram, and works on a phone:
+
+👉 **[exponen-agi.github.io/ai-engineering-cookbook](https://exponen-agi.github.io/ai-engineering-cookbook/)**
+
+---
+
 ## 🎨 Interactive Cookbook Explorer
 
 The AI Engineering Cookbook is accompanied by a modern, interactive web application that provides a comprehensive visual walkthrough of the entire agentic SDLC workflow, agent profiles, verification gates, and community extensions.
@@ -153,6 +161,8 @@ ai-engineering-cookbook prompt-optimizer
 | **🛡️ [Agent Security](./docs/agent-security.md)** | Stopping an agent from being turned against you by the text it reads. | Prompt injection, the lethal trifecta, reviewing a skill before you install it |
 | **🔗 [Doc Coherence Skill](./docs/doc-coherence.md)** | Single-source-of-truth registry + CI gate that flags cross-doc drift. Install via [Installable Skills](#-installable-skills). | Canonical owners, authority order, deterministic gate |
 | **🔧 [Troubleshooting](./docs/troubleshooting.md)** | Common failure scenarios and step-by-step fixes. | Install errors, TDD issues, phantom completions |
+| **🧱 [Toolchain & Node Baseline](./docs/toolchain.md)** | Which Node.js version this repo needs, and why every CI tool is pinned. | Node baseline, pinned CI tools, the `check:toolchain` gate |
+| **🔒 [Security Policy](./SECURITY.md)** | What counts as a vulnerability here and how to report one privately. | Private reporting, scope, dry-running an installer |
 | **📖 [Glossary](./GLOSSARY.md)** | Plain-English definitions for every key term. | 30+ terms from AI Agent to Worktree |
 | **🤝 [Contributing](./CONTRIBUTING.md)** | How to improve the cookbook and add new content. | PR checklist, style guide, extension submissions |
 
