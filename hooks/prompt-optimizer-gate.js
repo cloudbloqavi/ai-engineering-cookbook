@@ -39,7 +39,12 @@ function passThrough() {
   let payload;
   try {
     const raw = await readStdin();
-    payload = JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    // `JSON.parse` succeeds on "null" and on bare scalars, and reading a field
+    // off those throws — which would crash the hook and take the user's prompt
+    // down with it. A hook must never be able to fail a session, so anything
+    // that is not an object is treated as an empty payload and passes through.
+    payload = parsed && typeof parsed === "object" ? parsed : {};
   } catch {
     passThrough();
     return;
