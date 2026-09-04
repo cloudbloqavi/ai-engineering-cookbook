@@ -117,7 +117,7 @@ OWASP now has a dedicated project for exactly this — the **Agentic Skills Top 
 
 ---
 
-## 🛡️ Four defences that actually work
+## 🛡️ Five defences that actually work
 
 Ranked by how much they buy you. Do them in this order.
 
@@ -164,6 +164,54 @@ IRREVERSIBLE        → stop and ask a human
   git push --force · delete a branch or table · send an email
   post to a public issue · rotate a key · deploy · pay for something
 ```
+
+### 5. Put the agent in a sandbox, so the first four are enforced and not just promised
+
+Defences 1 and 3 are decisions: *"this session gets no secrets"*, *"this one gets no network"*. A sandbox is what turns those decisions into something the agent **cannot** talk its way out of. Without one, every rule above is honour-system — and the whole point of prompt injection is that the agent stops honouring your instructions.
+
+This matters more than it used to. In August 2026 Check Point published eleven vulnerabilities across the major agent frameworks — LangChain, LangGraph, CrewAI, AutoGen, Microsoft Agent Framework and Google ADK — with a common root cause: attacker-controlled text reaching the part of the system that decides what to *do*. The lesson is not "pick a different framework". It is that **the boundary has to sit outside the framework**, because the framework is the thing being attacked.
+
+Sandboxes come in three strengths. Pick the weakest one that actually covers your risk:
+
+| Strength | What it is | Good for | Real limit |
+| :--- | :--- | :--- | :--- |
+| **Process-level** | The agent tool's own permission prompts and denylists | Everyday local work on your own code | It runs as **you**. A bypass is a bug, and bugs happen |
+| **Container** | Dev Container, Docker, or your agent's built-in container mode | Untrusted repos, unreviewed MCP servers, anything with network egress rules | Shared kernel. Weaker against a real escape |
+| **microVM / gVisor** | E2B, Modal Sandboxes, Firecracker, gVisor | Running code the agent *wrote itself*, or anything touching customer data | Slower to start; needs a service or real infrastructure |
+
+For almost everyone reading this, **container-level is the right answer** and is one file away. A Dev Container gives the agent a throwaway filesystem, an explicit list of mounted folders, and a network you control:
+
+```bash
+# macOS and Linux — from your project root
+mkdir -p .devcontainer
+
+# Then open the folder in VS Code and choose
+# "Dev Containers: Reopen in Container".
+```
+
+```powershell
+# Windows (PowerShell) — from your project root
+New-Item -ItemType Directory -Force -Path .devcontainer
+
+# Then open the folder in VS Code and choose
+# "Dev Containers: Reopen in Container".
+```
+
+The rule of thumb, in one line:
+
+```text
+Reading your own code, no secrets in the folder   → process-level is fine
+Someone else's repo, or a new MCP server          → container
+Executing code the agent generated, or prod data  → microVM / gVisor
+```
+
+> [!WARNING]
+> **A sandbox contains the blast; it does not stop the injection.** An agent inside a container can still be persuaded to write nonsense into your pull request, or to send your data somewhere — *if you left the network open*. Isolation is defence in depth on top of defences 1–4, never a replacement for them.
+
+Whichever strength you pick, write down what is inside the boundary and what is outside it. An isolation setup nobody can describe in one sentence is not one you can rely on.
+
+> [!NOTE]
+> If you run MCP servers, the NSA's AI Security Center published security design guidance for them in May 2026 — *Model Context Protocol (MCP): Security Design Considerations for AI-Driven Automation* ([PDF](https://media.defense.gov/2026/Jun/02/2003943289/-1/-1/0/CSI_MCP_SECURITY.PDF)). It is short, vendor-neutral, and covers access control, logging and unsafe tool execution. Worth reading before you expose a server to anything beyond your own machine.
 
 ---
 

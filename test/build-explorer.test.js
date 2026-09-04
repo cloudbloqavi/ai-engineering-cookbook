@@ -6,7 +6,7 @@
  * that gate depends on — deterministic output, correct inlining, and loud
  * failures on bad input — using throwaway fixtures, never the real design/ dir.
  *
- * Run: npm test   (uses node:test, built into Node 18+; no dependencies)
+ * Run: npm test   (uses node:test, built into Node 22+; no dependencies)
  */
 
 const test = require("node:test");

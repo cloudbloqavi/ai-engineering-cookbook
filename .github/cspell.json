@@ -125,7 +125,19 @@
     "Arize",
     "npmrc",
     "behaviour",
-    "prioritise"
+    "prioritise",
+    "unreviewed",
+    "CISA",
+    "organisation",
+    "organisations",
+    "exfiltrating",
+    "devcontainer",
+    "gVisor",
+    "Firecracker",
+    "nvmrc",
+    "Krypton",
+    "Dependabot",
+    "dependabot"
   ],
   "ignorePaths": [
     "node_modules",

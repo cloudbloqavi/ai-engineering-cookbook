@@ -102,7 +102,10 @@ See `design/README.md` for full instructions on editing source files and regener
 
 Before opening a PR, confirm all items:
 
-- [ ] `npm test` passes (runs the unit tests for the scripts in `scripts/` — needs Node 20 or newer; no install step required)
+- [ ] `npm test` passes (runs the unit tests for the scripts in `scripts/` — needs Node 22 or newer; no install step required)
+- [ ] `npm run lint:docs` passes (the doc-coherence gate)
+- [ ] `npm run check:toolchain` passes (Node baseline and pinned CI tools — see [Toolchain](./docs/toolchain.md))
+- [ ] A new guide is linked from **both** the README table and `index.html` (a test enforces the second)
 - [ ] Spell-checked (no obvious typos)
 - [ ] All links work (internal and external)
 - [ ] Tone is consistent with the rest of the guide (direct, plain English, no fluff)

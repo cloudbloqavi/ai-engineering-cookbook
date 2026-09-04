@@ -5,7 +5,7 @@
  * throwaway fixture repos and assert on its exit code and `--json` output.
  * Exit codes are the contract CI relies on: 0 = clean, 1 = drift, 2 = bad config.
  *
- * Run: npm test   (uses node:test, built into Node 18+; no dependencies)
+ * Run: npm test   (uses node:test, built into Node 22+; no dependencies)
  */
 
 const test = require("node:test");
