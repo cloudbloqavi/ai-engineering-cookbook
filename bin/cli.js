@@ -62,6 +62,25 @@ function showHelp() {
   );
 }
 
+/**
+ * Translate a child process's 'close' arguments into an exit code for this
+ * process.
+ *
+ * A child that is killed by a signal reports `code === null` and a signal name.
+ * Passing that straight through as `code ?? 0` reports success for a process
+ * that crashed — an installer killed by the out-of-memory killer, or a user
+ * pressing Ctrl-C, would look like a clean install to whatever is scripting
+ * this CLI. Anything that did not exit 0 of its own accord is a failure.
+ *
+ * @param {number|null} code    exit code, or null if killed by a signal
+ * @param {string|null} signal  signal name, or null on a normal exit
+ * @returns {number} 0 only on a genuine clean exit
+ */
+function exitCodeFor(code, signal) {
+  if (signal) return 1;
+  return code ?? 1;
+}
+
 // Run the installer once per selected tool, sequentially. Exits with the first
 // non-zero code so a single failure is visible.
 function runForTools(scriptPath, tools, extraArgs = []) {
@@ -77,8 +96,9 @@ function runForTools(scriptPath, tools, extraArgs = []) {
     const tool = tools[index++];
     process.stdout.write(`\n\x1b[1m\x1b[36m── Installing for ${tool} ──\x1b[0m\n`);
     const child = fork(fullPath, ['--tool', tool, ...extraArgs], { stdio: 'inherit' });
-    child.on('close', (code) => {
-      if (code && !exitCode) exitCode = code;
+    child.on('close', (code, signal) => {
+      const resolved = exitCodeFor(code, signal);
+      if (resolved && !exitCode) exitCode = resolved;
       next();
     });
   };
@@ -171,7 +191,7 @@ function main(args = process.argv.slice(2)) {
     const rest = args.slice(1);
     const fullPath = path.resolve(__dirname, subcommands[cmd]);
     const child = fork(fullPath, rest, { stdio: 'inherit' });
-    child.on('close', (code) => process.exit(code ?? 0));
+    child.on('close', (code, signal) => process.exit(exitCodeFor(code, signal)));
   } else {
     process.stderr.write(`\x1b[31mUnknown command:\x1b[0m "${cmd}"\n\n`);
     showHelp();
@@ -185,4 +205,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { ENVIRONMENTS, subcommands, parseSelection, showHelp, main };
+module.exports = { ENVIRONMENTS, subcommands, parseSelection, showHelp, exitCodeFor, main };

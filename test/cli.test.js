@@ -25,7 +25,7 @@ const os = require("node:os");
 const { spawnSync } = require("node:child_process");
 
 const CLI_PATH = path.join(__dirname, "..", "bin", "cli.js");
-const { ENVIRONMENTS, subcommands, parseSelection } = require(CLI_PATH);
+const { ENVIRONMENTS, subcommands, parseSelection, exitCodeFor } = require(CLI_PATH);
 
 /** Run the CLI (or any script) with Node directly — no shell, so Windows is fine. */
 function run(scriptPath, args = []) {
@@ -207,5 +207,46 @@ test("a dry run writes nothing into the working directory", () => {
         `${skill} --tool ${env.tool} wrote to disk during a dry run`
       );
     }
+  }
+});
+
+// --- child exit codes ----------------------------------------------------
+
+test("exitCodeFor reports failure for a child killed by a signal", () => {
+  // Node reports (null, 'SIGKILL') when a child is killed. The router used to
+  // pass that through as `code ?? 0`, so an installer killed by the
+  // out-of-memory killer — or by the user pressing Ctrl-C — looked like a
+  // clean install to any script checking `$?`.
+  assert.equal(exitCodeFor(null, "SIGKILL"), 1);
+  assert.equal(exitCodeFor(null, "SIGINT"), 1);
+  assert.equal(exitCodeFor(null, "SIGTERM"), 1);
+});
+
+test("exitCodeFor passes a real exit code straight through", () => {
+  assert.equal(exitCodeFor(0, null), 0);
+  assert.equal(exitCodeFor(1, null), 1);
+  assert.equal(exitCodeFor(2, null), 2);
+});
+
+test("exitCodeFor treats an unknown outcome as failure, not success", () => {
+  // Neither a code nor a signal should never happen, but if it does, the safe
+  // reading is "something went wrong", not "all good".
+  assert.equal(exitCodeFor(null, null), 1);
+});
+
+test("the router and the multi-tool loop both use exitCodeFor", () => {
+  // Guards against either call site drifting back to `code ?? 0`.
+  const src = fs.readFileSync(path.resolve(__dirname, "..", "bin", "cli.js"), "utf8");
+  const handlers = src.match(/\.on\('close', \(code, signal\) =>[\s\S]*?\n/g) || [];
+  assert.equal(handlers.length, 2, "expected exactly two child 'close' handlers");
+  const callSites = src.match(/(?<!function )exitCodeFor\(code, signal\)/g) || [];
+  assert.equal(callSites.length, 2, "both 'close' handlers must resolve the code the same way");
+  // `code ?? 0` appears once more in the JSDoc that explains the old bug, so
+  // this looks only at the handlers themselves.
+  for (const handler of handlers) {
+    assert.ok(
+      !/code \?\? 0/.test(handler),
+      `a 'close' handler still treats a signal kill as success: ${handler.trim()}`,
+    );
   }
 });

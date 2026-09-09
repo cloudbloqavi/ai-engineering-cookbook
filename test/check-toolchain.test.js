@@ -29,7 +29,11 @@ const {
   parseWorkflowNodeVersions,
   parseGlobalInstalls,
   parseNodeClaims,
+  normalizeClaimLine,
+  parseActionUses,
+  checkActionPins,
   NODE_EOL,
+  MUTABLE_ACTION_REFS,
 } = require("../scripts/check-toolchain.js");
 
 const REPO_ROOT = path.resolve(__dirname, "..");
@@ -419,5 +423,183 @@ test("this repository's baseline is a supported Node version", () => {
     result.warnings,
     [],
     "the declared Node baseline has reached end-of-life — raise engines.node, .nvmrc and the CI matrix",
+  );
+});
+
+// --- Markdown-emphasised Node claims (regression) ------------------------
+
+test("normalizeClaimLine strips the punctuation between the name and the number", () => {
+  assert.equal(normalizeClaimLine("**Node.js** (v18 or higher)"), "Node.js  v18 or higher)");
+  assert.equal(normalizeClaimLine("`Node 20+`"), "Node 20+");
+  assert.equal(normalizeClaimLine("_Node.js_ [22 or newer]"), "Node.js  22 or newer]");
+  // Plain prose is untouched.
+  assert.equal(normalizeClaimLine("Node 22 or newer"), "Node 22 or newer");
+});
+
+test("parseNodeClaims sees a claim wrapped in Markdown emphasis and brackets", () => {
+  // The exact line that sat in docs/installation.md and passed the gate for
+  // months: the emphasis markers and the opening bracket separated "Node.js"
+  // from "v18", so none of the patterns matched.
+  const claims = parseNodeClaims(
+    "- **Node.js** (v18 or higher): Required if you are developing Node-based applications.\n",
+  );
+  assert.equal(claims.length, 1);
+  assert.equal(claims[0].major, 18);
+  assert.equal(claims[0].line, 1);
+  // The reported text is the line as written, so the author can find it.
+  assert.match(claims[0].text, /\*\*Node\.js\*\*/);
+});
+
+test("parseNodeClaims reads the other emphasised forms too", () => {
+  const forms = {
+    "`Node.js 20+` is required": 20,
+    "* Node.js (18 or newer)": 18,
+    "**Requires Node.js v16**": 16,
+    "Node.js [22 or higher]": 22,
+  };
+  for (const [line, major] of Object.entries(forms)) {
+    const claims = parseNodeClaims(line);
+    assert.equal(claims.length, 1, `no claim found in ${JSON.stringify(line)}`);
+    assert.equal(claims[0].major, major, `wrong major for ${JSON.stringify(line)}`);
+  }
+});
+
+test("normalising does not invent a claim out of ordinary prose", () => {
+  // The risk of stripping punctuation is a false positive, which would block
+  // an innocent pull request. Each of these mentions Node and a number
+  // without promising a minimum.
+  const innocent = [
+    "Node.js (see the table below) ships on a six-month cadence.",
+    "We tested against 22 different repositories.",
+    "The `node-version: 20` line in the example workflow is illustrative.",
+    "Node 20 reached end-of-life in April 2026.",
+  ];
+  for (const line of innocent) {
+    assert.deepEqual(parseNodeClaims(line), [], `false positive on ${JSON.stringify(line)}`);
+  }
+});
+
+test("a stale claim in an emphasised prerequisites list fails the gate", () => {
+  const dir = makeRepo({
+    "package.json": JSON.stringify({ engines: { node: ">=22" } }),
+    ".nvmrc": "24\n",
+    "docs/installation.md": "## Prerequisites\n\n- **Node.js** (v18 or higher): required.\n",
+  });
+  const result = checkToolchain({ root: dir, now: new Date("2026-09-09") });
+  assert.equal(result.ok, false);
+  oneErrorMatching(result, "docs/installation.md:3");
+});
+
+// --- GitHub Action pins --------------------------------------------------
+
+test("parseActionUses reads the action and its ref", () => {
+  const yaml = [
+    "jobs:",
+    "  build:",
+    "    steps:",
+    "      - uses: actions/checkout@v7",
+    '      - uses: "actions/setup-node@v7"',
+    "      - uses: owner/action@a1b2c3d4  # a commit sha",
+    "      - name: something",
+    "        uses: another/action@v2.1.0",
+  ].join("\n");
+
+  const uses = parseActionUses(yaml);
+  assert.deepEqual(
+    uses.map((u) => [u.action, u.ref]),
+    [
+      ["actions/checkout", "v7"],
+      ["actions/setup-node", "v7"],
+      ["owner/action", "a1b2c3d4"],
+      ["another/action", "v2.1.0"],
+    ],
+  );
+  assert.ok(uses.every((u) => !u.mutable));
+});
+
+test("parseActionUses skips local and container actions", () => {
+  const yaml = [
+    "      - uses: ./.github/actions/local",
+    "      - uses: docker://alpine:3.20",
+    "      - uses: actions/checkout@v7",
+  ].join("\n");
+  assert.deepEqual(
+    parseActionUses(yaml).map((u) => u.action),
+    ["actions/checkout"],
+  );
+});
+
+test("parseActionUses flags a ref with no version and a moving branch", () => {
+  const uses = parseActionUses(
+    ["      - uses: actions/checkout", "      - uses: owner/action@main"].join("\n"),
+  );
+  assert.equal(uses[0].ref, null);
+  assert.equal(uses[1].mutable, true);
+  for (const ref of MUTABLE_ACTION_REFS) {
+    assert.equal(parseActionUses(`      - uses: o/a@${ref}`)[0].mutable, true);
+  }
+});
+
+test("an action pinned to different refs in two workflows fails the gate", () => {
+  // The half-finished bump: one Dependabot pull request merged, the other not.
+  // Both files are valid YAML and both jobs go green, so nothing else notices.
+  const dir = makeRepo({
+    "package.json": JSON.stringify({ engines: { node: ">=22" } }),
+    ".nvmrc": "24\n",
+    ".github/workflows/a.yml": "jobs:\n  a:\n    steps:\n      - uses: actions/checkout@v7\n",
+    ".github/workflows/b.yml": "jobs:\n  b:\n    steps:\n      - uses: actions/checkout@v4\n",
+  });
+  const result = checkToolchain({ root: dir, now: new Date("2026-09-09") });
+  assert.equal(result.ok, false);
+  const msg = oneErrorMatching(result, "actions/checkout");
+  assert.match(msg, /v4 and v7/);
+  assert.equal(result.stats.actionUses, 2);
+});
+
+test("an unpinned or branch-pinned action fails the gate", () => {
+  const dir = makeRepo({
+    "package.json": JSON.stringify({ engines: { node: ">=22" } }),
+    ".nvmrc": "24\n",
+    ".github/workflows/ci.yml": [
+      "jobs:",
+      "  a:",
+      "    steps:",
+      "      - uses: actions/checkout",
+      "      - uses: some/action@main",
+      "",
+    ].join("\n"),
+  });
+  const result = checkToolchain({ root: dir, now: new Date("2026-09-09") });
+  assert.equal(result.ok, false);
+  oneErrorMatching(result, "with no version");
+  oneErrorMatching(result, 'moving ref "main"');
+});
+
+test("consistent, tagged action pins pass", () => {
+  const dir = makeRepo({
+    "package.json": JSON.stringify({ engines: { node: ">=22" } }),
+    ".nvmrc": "24\n",
+    ".github/workflows/a.yml": "jobs:\n  a:\n    steps:\n      - uses: actions/checkout@v7\n",
+    ".github/workflows/b.yml": "jobs:\n  b:\n    steps:\n      - uses: actions/checkout@v7\n",
+  });
+  const result = checkToolchain({ root: dir, now: new Date("2026-09-09") });
+  assert.equal(result.ok, true, result.errors.join("\n"));
+  assert.equal(result.stats.actionUses, 2);
+});
+
+test("checkActionPins is pure and reports nothing for a clean set", () => {
+  const uses = [{ action: "actions/checkout", ref: "v7", mutable: false, file: "a.yml" }];
+  const byAction = new Map([["actions/checkout", new Set(["v7"])]]);
+  assert.deepEqual(checkActionPins(byAction, uses), []);
+});
+
+test("this repository pins every action to one ref per action", () => {
+  // The repo-level promise: a reader copying these workflows gets pins that
+  // agree with each other.
+  const result = checkToolchain({ root: REPO_ROOT });
+  assert.ok(result.stats.actionUses > 0, "no action pins were found to check");
+  assert.deepEqual(
+    result.errors.filter((e) => e.includes("pinned to")),
+    [],
   );
 });
