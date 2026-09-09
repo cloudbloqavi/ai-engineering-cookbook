@@ -137,7 +137,13 @@
     "nvmrc",
     "Krypton",
     "Dependabot",
-    "dependabot"
+    "dependabot",
+    "colour",
+    "FEFF",
+    "sandboxed",
+    "normalising",
+    "Koi",
+    "ToxicSkills"
   ],
   "ignorePaths": [
     "node_modules",

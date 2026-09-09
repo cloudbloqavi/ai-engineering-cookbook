@@ -119,10 +119,37 @@ npm run check:toolchain
 | :---: | :--- | :--- |
 | 1 | `package.json` engines, `.nvmrc` and every CI workflow agree on the supported Node versions | Yes |
 | 2 | Every `npm install -g` in a workflow names an exact version (`pkg@1.2.3`, not `pkg` or `pkg@^1.2.3`) | Yes |
-| 3 | No Markdown file tells readers an older Node version is enough than `package.json` requires | Yes |
-| 4 | The declared minimum is still supported upstream | **No** — prints a warning only |
+| 3 | Every `uses:` names a fixed ref, and the same action is pinned to the same ref in every workflow | Yes |
+| 4 | No Markdown file tells readers an older Node version is enough than `package.json` requires | Yes |
+| 5 | The declared minimum is still supported upstream | **No** — prints a warning only |
 
-Check 4 is deliberately a warning. A gate that turns red because a date passed, with no change to the code, is a time bomb: it breaks an unrelated pull request and teaches people to ignore the gate. It tells you, and a human decides when to move.
+Check 5 is deliberately a warning. A gate that turns red because a date passed, with no change to the code, is a time bomb: it breaks an unrelated pull request and teaches people to ignore the gate. It tells you, and a human decides when to move.
+
+### 🧩 Check 3 — why Actions get their own rule
+
+The npm tool pins live in one `env:` block, so bumping one is a single edit. Action pins do not: `uses: actions/checkout@v7` is repeated on every job in every workflow. That difference is what makes them rot.
+
+Picture the usual sequence:
+
+```text
+Dependabot opens 2 pull requests
+        │
+        ├─ "bump actions/checkout"     → merged      → 7 lines now on v7
+        └─ "bump actions/setup-node"   → not merged  → 4 lines still on v4
+                                                          │
+        Every job still passes. Nothing is red. ───────────┘
+        The repository is half-migrated and nothing says so.
+```
+
+Check 3 turns that silent state into a failed build. It asserts two things, neither of which needs the network:
+
+- **Every `uses:` carries a ref.** `uses: actions/checkout` resolves the action's default branch when the job starts, so the build has no fixed input.
+- **One ref per action, repository-wide.** If `actions/checkout` is `@v7` in one workflow and `@v4` in another, the gate names both and fails.
+
+It deliberately does **not** ask whether a pin is the newest release. That needs a network call, which would make the gate non-deterministic and turn every GitHub outage into a red build. Keeping pins *current* stays Dependabot's job; keeping them *consistent and fixed* is the gate's.
+
+> [!WARNING]
+> **Stale Action majors are a real deadline, not a style preference.** GitHub retires the Node runtime that older action versions run on. When that happens, a workflow pinned to a retired major stops starting at all — the failure is not a warning inside your job, it is the job never running. Merge the Dependabot pull requests.
 
 ### When a check fires
 

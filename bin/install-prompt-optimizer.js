@@ -28,6 +28,7 @@
 const fs = require("fs");
 const path = require("path");
 const os = require("os");
+const { hookCommandFor } = require("./hook-command");
 
 const args = process.argv.slice(2);
 
@@ -195,10 +196,12 @@ function installClaudeHook() {
 
   copyFile(HOOK_SRC, hookDest, "gate hook");
 
-  const command = opts.user
-    ? `node ${path.join("~", ".claude", "hooks", "prompt-optimizer-gate.js")}`
-    : "node .claude/hooks/prompt-optimizer-gate.js";
-  const hookEntry = { type: "command", command };
+  // The command string must resolve on the machine that reads settings.json,
+  // which is not necessarily this one — see bin/hook-command.js.
+  const hookEntry = {
+    type: "command",
+    command: hookCommandFor(hookDest, { user: opts.user, cwd: process.cwd() }),
+  };
 
   let settings = {};
   if (fs.existsSync(settingsPath)) {
