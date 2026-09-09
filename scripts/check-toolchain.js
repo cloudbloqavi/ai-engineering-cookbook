@@ -3,15 +3,17 @@
  * check-toolchain
  *
  * Deterministic gate over the *build environment* — the sibling of
- * `check-doc-coherence.js`, which guards the prose. It answers four questions
+ * `check-doc-coherence.js`, which guards the prose. It answers five questions
  * that this repo has silently got wrong before:
  *
  *   1. Do `package.json` engines, `.nvmrc` and every CI workflow agree on
  *      which Node versions are supported?
  *   2. Is every tool CI installs pinned to an exact version, so a release
  *      upstream cannot turn the build red with no change here?
- *   3. Do the docs promise a Node version older than the one we support?
- *   4. (Advisory) Is our declared minimum still receiving upstream security
+ *   3. Does every GitHub Action carry a fixed ref, and do all workflows agree
+ *      on which ref, so a half-finished bump cannot pass unnoticed?
+ *   4. Do the docs promise a Node version older than the one we support?
+ *   5. (Advisory) Is our declared minimum still receiving upstream security
  *      fixes, or has it reached end-of-life?
  *
  * No LLM, no network, no dependencies — plain string and regex work over files
@@ -38,7 +40,7 @@ const path = require("path");
 /**
  * End-of-life dates for Node.js LTS majors, from the upstream release
  * schedule (https://github.com/nodejs/Release). Used ONLY for the advisory
- * warning in check 4 — never to fail the build, because a gate that turns red
+ * warning in check 5 — never to fail the build, because a gate that turns red
  * on a calendar date with no code change is a time bomb, not a test.
  *
  * Keep in sync when a new LTS line opens; the test suite pins this shape.
@@ -181,6 +183,131 @@ function parseGlobalInstalls(yaml) {
 }
 
 /**
+ * Refs that name a moving target rather than a release.
+ *
+ * `uses: owner/action@main` re-resolves on every run, so whatever is on that
+ * branch at the moment CI starts is what executes with your repository token.
+ * That is the supply-chain risk `docs/agent-security.md` describes, applied to
+ * the build itself.
+ */
+const MUTABLE_ACTION_REFS = new Set(["main", "master", "develop", "latest", "HEAD"]);
+
+/**
+ * Collect every third-party GitHub Action a workflow runs, with the ref it is
+ * pinned to.
+ *
+ * Local actions (`./.github/actions/x`) and container actions (`docker://…`)
+ * are skipped: neither is a version pin this gate can reason about.
+ *
+ * @param {string} yaml raw workflow text
+ * @returns {{action: string, ref: string|null, mutable: boolean}[]}
+ */
+function parseActionUses(yaml) {
+  const out = [];
+
+  for (const m of String(yaml).matchAll(/^\s*(?:-\s*)?uses:\s*["']?([^\s"'#]+)/gm)) {
+    const spec = m[1];
+    if (spec.startsWith("./") || spec.startsWith(".\\") || spec.startsWith("docker://")) continue;
+
+    const at = spec.lastIndexOf("@");
+    const action = at > 0 ? spec.slice(0, at) : spec;
+    const ref = at > 0 ? spec.slice(at + 1) : null;
+
+    out.push({ action, ref, mutable: ref !== null && MUTABLE_ACTION_REFS.has(ref) });
+  }
+  return out;
+}
+
+/**
+ * Check every Action pin across all workflows at once.
+ *
+ * Three failures, in increasing subtlety:
+ *
+ *   1. **No ref at all** (`uses: actions/checkout`). GitHub resolves the
+ *      default branch, so the build has no fixed input.
+ *   2. **A mutable ref** (`@main`). Same problem, stated explicitly.
+ *   3. **Two workflows on different majors of the same action.** This is the
+ *      one a human will not notice. Bumping an action means editing every
+ *      `uses:` line by hand, and a partial bump — one file updated, another
+ *      missed, or one of several Dependabot pull requests merged — leaves the
+ *      repository half-migrated with both halves green. The npm pins in this
+ *      repository are hoisted into a workflow `env:` block precisely so they
+ *      have one place to change; Action refs have no such single place, so
+ *      the gate enforces agreement instead.
+ *
+ * Note what this deliberately does *not* do: it never asks whether a pin is
+ * the newest release. That needs a network call, which would make the gate
+ * non-deterministic and fail closed when GitHub is unreachable. Keeping pins
+ * current is Dependabot's job (see `.github/dependabot.yml`); keeping them
+ * consistent and immutable is this gate's.
+ *
+ * @param {Map<string, Set<string>>} byAction action name → set of refs seen
+ * @param {{action: string, ref: string|null, mutable: boolean, file: string}[]} uses
+ * @returns {string[]} error messages
+ */
+function checkActionPins(byAction, uses) {
+  const errors = [];
+
+  for (const u of uses) {
+    if (u.ref === null) {
+      errors.push(
+        `${u.file} uses "${u.action}" with no version. GitHub resolves the ` +
+          "action's default branch at run time, so the build has no fixed " +
+          'input. Pin it as "action@v1".',
+      );
+    } else if (u.mutable) {
+      errors.push(
+        `${u.file} pins "${u.action}" to the moving ref "${u.ref}". Whatever ` +
+          "is on that branch when CI starts runs with this repository's token. " +
+          "Pin a release tag instead.",
+      );
+    }
+  }
+
+  for (const [action, refs] of byAction) {
+    if (refs.size > 1) {
+      errors.push(
+        `"${action}" is pinned to ${[...refs].sort().join(" and ")} in different ` +
+          "workflows. A half-finished bump leaves both halves green while only " +
+          "one is actually current. Use one ref everywhere.",
+      );
+    }
+  }
+
+  return errors;
+}
+
+/**
+ * Strip the Markdown punctuation that sits between the word "Node" and the
+ * version number, so a claim is matched on what the reader *sees* rather than
+ * on the raw source.
+ *
+ * This exists because of a real escape. The prerequisites list in
+ * `docs/installation.md` read:
+ *
+ *     - **Node.js** (v18 or higher): Required if you are ...
+ *
+ * A reader sees "Node.js (v18 or higher)" — a minimum-version promise, and a
+ * wrong one, since Node 18 left support in April 2025. The gate saw
+ * `Node.js** (v18`, where the emphasis markers and the opening bracket sit
+ * between the name and the number, so none of the patterns below matched and
+ * the stale line survived every CI run.
+ *
+ * Only emphasis, inline-code ticks and opening brackets are removed. That is
+ * enough to normalise every form this repo's docs actually use, and narrow
+ * enough that it cannot invent a claim: each pattern still requires digits
+ * immediately after the name, so "Node.js (see the table below)" stays unmatched.
+ *
+ * @param {string} line
+ * @returns {string}
+ */
+function normalizeClaimLine(line) {
+  return String(line)
+    .replace(/[*_`]+/g, "")
+    .replace(/[([]/g, " ");
+}
+
+/**
  * Find claims in prose about the minimum Node version, e.g. "Node.js 18+",
  * "Node 20 or newer", "requires Node 18". Only the *minimum* forms are
  * matched — a bare mention of a version is not a promise.
@@ -221,9 +348,12 @@ function parseNodeClaims(md) {
       }
       if (fence !== null) return;
       if (line.includes("toolchain-ignore")) return;
+      const probe = normalizeClaimLine(line);
       for (const re of patterns) {
-        const m = re.exec(line);
+        const m = re.exec(probe);
         if (m) {
+          // Report the line as written, not as normalised — the author has to
+          // find it in the file.
           claims.push({ line: idx + 1, major: Number(m[1]), text: line.trim() });
           break;
         }
@@ -277,7 +407,7 @@ function walkMarkdown(dir, root, acc) {
 function checkToolchain({ root = process.cwd(), now = new Date() } = {}) {
   const errors = [];
   const warnings = [];
-  const stats = { workflows: 0, nodeVersions: [], globalInstalls: 0, docs: 0 };
+  const stats = { workflows: 0, nodeVersions: [], globalInstalls: 0, actionUses: 0, docs: 0 };
 
   // --- 1. the baseline itself -------------------------------------------
   const pkgPath = path.join(root, "package.json");
@@ -338,7 +468,7 @@ function checkToolchain({ root = process.cwd(), now = new Date() } = {}) {
     }
   }
 
-  // --- 3. workflows: supported versions, and pinned tools ---------------
+  // --- 3. workflows: Node versions, tool pins, and Action pins ----------
   const wfDir = path.join(root, ".github", "workflows");
   if (fs.existsSync(wfDir)) {
     const files = fs
@@ -346,6 +476,11 @@ function checkToolchain({ root = process.cwd(), now = new Date() } = {}) {
       .filter((f) => f.endsWith(".yml") || f.endsWith(".yaml"))
       .sort();
     stats.workflows = files.length;
+
+    // Action pins are compared across every workflow at once, so they are
+    // collected here and checked after the per-file loop.
+    const actionUses = [];
+    const refsByAction = new Map();
 
     for (const file of files) {
       const rel = `.github/workflows/${file}`;
@@ -372,7 +507,18 @@ function checkToolchain({ root = process.cwd(), now = new Date() } = {}) {
           );
         }
       }
+
+      for (const use of parseActionUses(yaml)) {
+        stats.actionUses += 1;
+        actionUses.push({ ...use, file: rel });
+        if (use.ref !== null) {
+          if (!refsByAction.has(use.action)) refsByAction.set(use.action, new Set());
+          refsByAction.get(use.action).add(use.ref);
+        }
+      }
     }
+
+    errors.push(...checkActionPins(refsByAction, actionUses));
   }
 
   // --- 4. docs do not promise an older Node than we support -------------
@@ -417,8 +563,9 @@ function main(argv) {
         "Checks:",
         "  1. package.json engines, .nvmrc and every CI workflow agree",
         "  2. every `npm install -g` in CI is pinned to an exact version",
-        "  3. no doc promises an older Node than package.json requires",
-        "  4. (warning only) the baseline is still supported upstream",
+        "  3. every `uses:` names a fixed ref, and one ref per action repo-wide",
+        "  4. no doc promises an older Node than package.json requires",
+        "  5. (warning only) the baseline is still supported upstream",
         "",
         "Exit codes: 0 clean | 1 violations found | 2 usage error",
       ].join("\n") + "\n",
@@ -464,6 +611,7 @@ function main(argv) {
       `✓ check-toolchain: Node >=${result.baseline}, ` +
         `${result.stats.workflows} workflow(s), ` +
         `${result.stats.globalInstalls} pinned CI tool(s), ` +
+        `${result.stats.actionUses} action pin(s), ` +
         `${result.stats.docs} docs scanned.\n`,
     );
   }
@@ -483,7 +631,11 @@ module.exports = {
   resolveWorkflowEnv,
   parseWorkflowNodeVersions,
   parseGlobalInstalls,
+  parseActionUses,
+  checkActionPins,
+  normalizeClaimLine,
   parseNodeClaims,
   NODE_EOL,
+  MUTABLE_ACTION_REFS,
   main,
 };

@@ -9,7 +9,7 @@ This guide walks you through setting up the AI-Native SDLC environment on your m
 Before installing the tools, make sure you have the following installed on your system:
 
 - **Git**: Active version control.
-- **Node.js** (v18 or higher): Required if you are developing Node-based applications.
+- **Node.js** (v22 or higher): Required if you are developing Node-based applications, and to run this repository's own checks. Node 18 and Node 20 have both reached end-of-life and no longer receive security fixes — see [Toolchain & Node Baseline](./toolchain.md).
 - **Python** (v3.10 or higher): Required for Spec-Kit.
 
 ---

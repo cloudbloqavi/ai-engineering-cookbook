@@ -24,7 +24,7 @@ jobs:
     name: Markdown Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install markdownlint-cli
         run: npm install -g markdownlint-cli@${{ env.MARKDOWNLINT_CLI_VERSION }}
@@ -36,7 +36,7 @@ jobs:
     name: Check Internal Links
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install markdown-link-check
         run: npm install -g markdown-link-check@${{ env.MARKDOWN_LINK_CHECK_VERSION }}
@@ -62,9 +62,9 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         node: ["22", "24"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node }}
 
@@ -79,9 +79,9 @@ jobs:
     name: Toolchain Consistency
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_DEFAULT }}
 
@@ -96,9 +96,9 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_DEFAULT }}
 
@@ -121,7 +121,7 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: true  # Advisory only — does not block merge
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install cspell
         run: npm install -g cspell@${{ env.CSPELL_VERSION }}

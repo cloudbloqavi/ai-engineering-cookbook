@@ -1,4 +1,48 @@
-# Agents Reference
+# AGENTS.md
+
+Every coding agent reads this file first. It is the entry point for working in
+this repository, and it is short on purpose — it is loaded on every session, so
+every line here costs tokens on every run.
+
+## Start here
+
+**Read [`CLAUDE.md`](./CLAUDE.md) before you do anything else.** It is the single
+place the rules live: the four pre-flight gates, the token-efficiency policy, the
+per-task TDD loop, and the conflict-resolution order. This file does not repeat
+those rules; it points at them.
+
+## Setup
+
+No install step and no dependencies. The test suite uses `node:test`, which is
+built into Node.
+
+```bash
+node --version   # must be 22 or newer — see docs/toolchain.md
+```
+
+## Tests
+
+Run the full pipeline before you commit. It is the same command CI runs, and it
+works identically on macOS, Windows (PowerShell) and Linux.
+
+```bash
+npm test && npm run lint:docs && npm run check:toolchain && npm run check:explorer
+```
+
+## Rules
+
+- **Never hand-edit `design/cookbook-explorer.html`.** It is generated. Change
+  `design/src/` and run `npm run build:explorer`; CI fails on drift.
+- **Never restate a fact another document owns.** Link to it instead. The
+  registry is [`templates/coherence.config.json`](./templates/coherence.config.json)
+  and `npm run lint:docs` enforces it.
+- **Do not add a dependency** without maintainer approval — see CLAUDE.md §7.
+- **Every script under `scripts/` that CI depends on needs a test** in `test/`.
+- **Branch names** follow `<type>/<kebab-slug>`, e.g. `docs/add-faq`.
+
+---
+
+## Agents Reference
 
 > **What is an "agent" here?** An agent is an AI model (like Claude, Cursor, or Copilot) given a specific role, a set of input files, and clear constraints — so it behaves predictably within a defined boundary.
 
